@@ -9,7 +9,7 @@ def upscale_image(image_path, output_dir):
     Upscale image using Real-ESRGAN and return actual output path.
     """
 
-    REAL_ESRGAN_DIR = Path("Real-ESRGAN").resolve()
+    REAL_ESRGAN_DIR = Path("/kaggle/working/Real-ESRGAN")
 
     image_path = Path(image_path).resolve()
     output_dir = Path(output_dir).resolve()
@@ -30,14 +30,14 @@ def upscale_image(image_path, output_dir):
     # Wait for filesystem
     time.sleep(1)
 
-    # 1️⃣ Check intended output directory
+    #  Check intended output directory
     candidates = list(output_dir.glob("*"))
 
     if candidates:
         candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
         return candidates[0]
 
-    # 2️⃣ FALLBACK: check Real-ESRGAN default results folder
+    #  FALLBACK: check Real-ESRGAN default results folder
     fallback_dir = REAL_ESRGAN_DIR / "results"
     fallback_files = list(fallback_dir.glob("**/*"))
 
@@ -45,5 +45,6 @@ def upscale_image(image_path, output_dir):
         fallback_files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
         return fallback_files[0]
 
-    # 3️⃣ If still nothing → real failure
+    #  If still nothing → real failure
     raise RuntimeError("Real-ESRGAN ran but no output file was found")
+
