@@ -184,6 +184,19 @@ Return ONLY valid JSON (no markdown).
     )
     
     return json.loads(response.candidates[0].content.parts[0].text)
+#Expose refine_content() for pipeline usage and to call other functions
+def refine_content(ingestion_output_dir: str, user_vibe: str):
+    """
+    Kaggle / pipeline entry point.
+    Loads extracted slides and returns style_token dict.
+    """
+    slides = load_and_clean_slides(ingestion_output_dir)
+
+    if not slides:
+        raise RuntimeError("No slides found for refinement")
+
+    style_token = generate_style_token(user_vibe, slides)
+    return style_token
 
 
 # for testing this file
@@ -215,3 +228,4 @@ if __name__ == "__main__":
 
     
     print(f"Style token saved at: {output_path}")
+
