@@ -164,7 +164,7 @@ Return ONLY valid JSON (no markdown).
 }
 """
 
-    client = genai.Client()
+    client = genai.Client(api_key=api_key)
 
     user_prompt = {
         "user_vibe": user_vibe,
@@ -228,4 +228,5 @@ if __name__ == "__main__":
 
     
     print(f"Style token saved at: {output_path}")
+
 
