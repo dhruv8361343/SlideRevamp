@@ -5,22 +5,30 @@ import glob
 import csv
 from google import genai
 from google.genai import types
-from dotenv import load_dotenv
-
+#from dotenv import load_dotenv
+# if want to run locally
 # loading api key from .env file
-load_dotenv()
-api_key = os.getenv("GEMINI_API_KEY")
+#load_dotenv()
+#api_key = os.getenv("GEMINI_API_KEY")
+
+
+
+# for running it on kaggle
+from kaggle_secrets import UserSecretsClient
+user_secrets = UserSecretsClient()
+api_key= user_secrets.get_secret("GEMINI_API_KEY")
 
 if not api_key:
     print("no api key found")
     sys.exit(1)
 
+
  
 
-# 2. HELPER: LOAD & CLEAN SLIDE DATA
+#  to get the data from the extracted json and give it to llm for refinement
 def load_and_clean_slides(ingestion_output_dir):
     """
-    Reads extracted slide JSON + table CSVs.
+    Reads extracted slide JSON + table CSV.
     Returns structured slide-wise content for LLM.
     """
     slides = []
@@ -29,7 +37,7 @@ def load_and_clean_slides(ingestion_output_dir):
     files = sorted(glob.glob(pattern))
 
     if not files:
-        print("❌ No slide metadata found.")
+        print(" No slide metadata found.")
         return None
 
     for file_path in files:
@@ -43,16 +51,16 @@ def load_and_clean_slides(ingestion_output_dir):
 
         for shape in data.get("shapes", []):
 
-            # ---------- TEXT ----------
+            #text block
             if shape.get("has_text") and shape.get("text"):
                 text = shape["text"].strip()
-                if len(text) > 1:
+                if text:
                     blocks.append({
                         "type": "text",
                         "text": text
                     })
 
-            # ---------- TABLE ----------
+            #table 
             elif shape.get("has_table"):
                 csv_rel = shape.get("table_csv")
                 if csv_rel:
@@ -76,14 +84,14 @@ def load_and_clean_slides(ingestion_output_dir):
                             "data": "TABLE_PRESENT_BUT_MISSING"
                         })
 
-            # ---------- IMAGE ----------
+            # image
             elif shape.get("has_image"):
                 blocks.append({
                     "type": "image",
                     "note": "Image asset present"
                 })
 
-            # ---------- COMPLEX ----------
+            #complex
             elif shape.get("problem"):
                 blocks.append({
                     "type": "complex_visual",
@@ -97,18 +105,19 @@ def load_and_clean_slides(ingestion_output_dir):
 
     return slides
 
+ 
+# style and content reifnement (prompt for llm)
 
-# ==========================================
-# 3. STYLE + CONTENT REFINEMENT (LLM)
-# ==========================================
+
 def generate_style_token(user_vibe, slides):
     """
     Converts vibe + structured slides into a Style Token
-    with refined (NOT summarized) content.
+    with refined  content.
     """
 
     system_instruction = """
 You are the Style Orchestrator for a PPT Redesign System.
+
 
 ### ABSOLUTE RULES:
 - DO NOT summarize content
@@ -137,7 +146,7 @@ Return ONLY valid JSON (no markdown).
     "title": "Google Font Name",
     "body": "Google Font Name"
   },
-  "background_prompt": "Stable Diffusion background prompt",
+  "background_prompt": "Stable Diffusion v1.5 background prompt",
   "slides": [
     {
       "slide_num": number,
@@ -162,7 +171,7 @@ Return ONLY valid JSON (no markdown).
         "slides": slides
     }
 
-    print("🤖 Sending structured slides to LLM...")
+    
 
     response = client.models.generate_content(
         model="gemini-flash-latest",
@@ -173,13 +182,11 @@ Return ONLY valid JSON (no markdown).
             max_output_tokens=8192
         )
     )
-    print("Response:", response.candidates[0].content.parts[0].text[:500])
+    
     return json.loads(response.candidates[0].content.parts[0].text)
 
 
-# ==========================================
-# 4. EXECUTION
-# ==========================================
+# for testing this file
 if __name__ == "__main__":
 
     if len(sys.argv) < 2:
@@ -189,24 +196,22 @@ if __name__ == "__main__":
     ingestion_folder = sys.argv[1]
 
     if not os.path.exists(ingestion_folder):
-        print("❌ Ingestion folder not found.")
+        print("Ingestion folder not found.")
         sys.exit(1)
 
-    print("1️⃣ Loading extracted slide data...")
     slides = load_and_clean_slides(ingestion_folder)
 
     if not slides:
-        print("❌ Failed to load slides.")
+        print("Failed to load slides.")
         sys.exit(1)
 
     USER_VIBE = "Futuristic Cyberpunk, Neon Blue & Purple, High Tech, Dark Mode"
 
-    print("2️⃣ Generating style token...")
     style_token = generate_style_token(USER_VIBE, slides)
 
     output_path = os.path.join(ingestion_folder, "style_token.json")
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(style_token, f, indent=4)
 
-    print("\n✅ SUCCESS")
-    print(f"💾 Style token saved at: {output_path}")
+    
+    print(f"Style token saved at: {output_path}")
