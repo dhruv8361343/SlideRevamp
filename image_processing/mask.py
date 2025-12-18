@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 import shutil
 
-U2NET_DIR = Path("U-2-Net")
+U2NET_DIR = Path("/kaggle/working/U-2-Net")
 INPUT_DIR = U2NET_DIR / "test_data" / "test_images"
 RESULTS_DIR = U2NET_DIR / "test_data" / "u2net_results"
 
@@ -41,3 +41,4 @@ def generate_mask(image_path, output_dir):
     shutil.copy(expected_mask, final_mask)
 
     return final_mask
+
