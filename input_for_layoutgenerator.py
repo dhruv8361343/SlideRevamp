@@ -27,10 +27,12 @@ def compute_slide_features(slide_meta_path: Path):
         if s.get("has_table"):
             has_table = 1
 
-    features = {
-        "slide_num": slide["slide_num"],
+     features = {
+    
+        "num_shapes": len(slide["shapes"]),
         "num_text_blocks": text_blocks,
         "total_text_length": total_text_len,
+        "avg_text_len": (total_text_len / text_blocks) if text_blocks > 0 else 0,
         "num_images": len(image_areas),
         "largest_image_area": max(image_areas) if image_areas else 0.0,
         "avg_image_area": float(np.mean(image_areas)) if image_areas else 0.0,
@@ -50,4 +52,5 @@ def collect_all_slides_features(ppt_output_dir: Path):
             slide_features.append(features)
 
     return slide_features
+
 
