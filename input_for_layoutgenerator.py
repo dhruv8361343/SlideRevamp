@@ -1,56 +1,57 @@
 import json
 from pathlib import Path
-import numpy as np
+import pandas as pd
 
-def compute_slide_features(slide_meta_path: Path):
-    slide = json.loads(slide_meta_path.read_text())
+def extract_slide_features(slide_dir: Path):
+    meta_path = slide_dir / f"{slide_dir.name}_metadata.json"
 
-    text_blocks = 0
-    total_text_len = 0
-    image_areas = []
-    has_table = 0
+    with open(meta_path, "r", encoding="utf-8") as f:
+        slide = json.load(f)
 
-    for s in slide["shapes"]:
-        # text
-        if s.get("has_text"):
-            text_blocks += 1
-            if s.get("text"):
-                total_text_len += len(s["text"])
+    shapes = slide["shapes"]
 
-        # image
-        if s.get("has_image"):
-            w = s.get("width_norm", 0) or 0
-            h = s.get("height_norm", 0) or 0
-            image_areas.append(w * h)
+    num_shapes = len(shapes)
+    text_shapes = [s for s in shapes if s["has_text"]]
+    image_shapes = [s for s in shapes if s["has_image"]]
+    table_shapes = [s for s in shapes if s["has_table"]]
 
-        # table
-        if s.get("has_table"):
-            has_table = 1
+    total_text_len = sum(len(s["text"]) for s in text_shapes if s["text"])
+    num_text_blocks = len(text_shapes)
+    num_images = len(image_shapes)
 
-     features = {"num_shapes": len(slide["shapes"]),
-         "num_text_blocks": text_blocks,
-         "total_text_length": total_text_len,
-         "avg_text_len": (total_text_len / text_blocks) if text_blocks > 0 else 0,
-         "num_images": len(image_areas),
-         "largest_image_area": max(image_areas) if image_areas else 0.0,
-         "avg_image_area": float(np.mean(image_areas)) if image_areas else 0.0,
-         "has_table": has_table,
-         "slide_density": len(slide["shapes"]) / 10.0  # normalized proxy
+    img_areas = []
+    for img in image_shapes:
+        if img["width_norm"] and img["height_norm"]:
+            img_areas.append(img["width_norm"] * img["height_norm"])
+
+    largest_img_area = max(img_areas) if img_areas else 0.0
+    avg_img_area = sum(img_areas) / len(img_areas) if img_areas else 0.0
+
+    slide_density = round(num_shapes / 10.0, 2)
+
+    return {
+        "slide_num": slide["slide_num"],
+        "num_shapes": num_shapes,
+        "num_text_blocks": num_text_blocks,
+        "total_text_length": total_text_len,
+        "num_images": num_images,
+        "largest_image_area": round(largest_img_area, 3),
+        "avg_image_area": round(avg_img_area, 3),
+        "has_table": int(len(table_shapes) > 0),
+        "slide_density": slide_density
     }
 
-    return features
 
-def collect_all_slides_features(ppt_output_dir: Path):
-    slide_features = []
+def build_features_from_ingestion(ingestion_dir):
+    rows = []
+    ingestion_dir = Path(ingestion_dir)
 
-    for slide_dir in sorted(ppt_output_dir.glob("slide_*")):
-        meta_path = slide_dir / f"{slide_dir.name}_metadata.json"
-        if meta_path.exists():
-            features = compute_slide_features(meta_path)
-            slide_features.append(features)
+    for slide_dir in sorted(ingestion_dir.glob("slide_*")):
+        rows.append(extract_slide_features(slide_dir))
 
-    return slide_features
+    return pd.DataFrame(rows)
 
 
-
-
+df_features = build_features_from_ingestion("out(3)")
+df_features.head()
+df_features.to_csv("real_layou_dataset.csv", index=False)
