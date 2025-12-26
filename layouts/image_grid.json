@@ -1,0 +1,9 @@
+{
+  "name": "image_grid",
+  "elements": [
+    { "type": "image", "slot": 0, "x": 0.05, "y": 0.1, "width": 0.4, "height": 0.35 },
+    { "type": "image", "slot": 1, "x": 0.55, "y": 0.1, "width": 0.4, "height": 0.35 },
+    { "type": "image", "slot": 2, "x": 0.05, "y": 0.55, "width": 0.4, "height": 0.35 },
+    { "type": "image", "slot": 3, "x": 0.55, "y": 0.55, "width": 0.4, "height": 0.35 }
+  ]
+}
