@@ -1,0 +1,19 @@
+{
+  "name": "image_right",
+  "elements": [
+    {
+      "type": "text",
+      "x": 0.05,
+      "y": 0.2,
+      "width": 0.45,
+      "height": 0.6
+    },
+    {
+      "type": "image",
+      "x": 0.52,
+      "y": 0.15,
+      "width": 0.4,
+      "height": 0.7
+    }
+  ]
+}
