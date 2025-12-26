@@ -154,7 +154,8 @@ def choose_image_scale(dominance):
         return 1.0    # allow full size
 
 def choose_fit_mode(layout_name):
-    if layout_name in ["image_background", "image_grid"]:
+    # Use 'cover' for these layouts to look professional
+    if layout_name in ["image_background", "image_grid", "image_left", "image_right"]:
         return "cover"
     return "contain"
 
@@ -175,4 +176,5 @@ def apply_image_rules(bound_elements, layout_name):
             }
 
     return bound_elements
+
 
