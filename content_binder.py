@@ -5,20 +5,29 @@ def resolve_layout(predictions, features):
     best = predictions[0]
     second = predictions[1]
 
-    # Low confidence
-    if best["confidence"] < 0.55:
-        return "text_only"
-
-    # Ambiguous
-    if abs(best["confidence"] - second["confidence"]) < 0.08:
-        return "text_only"
-
-    # Content overrides
+    # --- 1. Content Overrides (Highest Priority) ---
     if features["has_table"]:
         return "text_only"
 
+    # If many images, force grid
     if features["num_images"] >= 3:
         return "image_grid"
+
+    # --- 2. Sanity Check for "Text Only" ---
+    # If model predicts text_only but we HAVE images, force an image layout
+    if best["layout"] == "text_only" and features["num_images"] > 0:
+        return "image_right"
+
+    # --- 3. Handle Low Confidence / Ambiguity ---
+    is_low_conf = best["confidence"] < 0.55
+    is_ambiguous = abs(best["confidence"] - second["confidence"]) < 0.08
+
+    if is_low_conf or is_ambiguous:
+        # Fallback logic: Pick a safe layout based on content
+        if features["num_images"] > 0:
+            return "image_right"  # Safe default if there are images
+        else:
+            return "text_only"    # Safe default if text only
 
     return best["layout"]
 
@@ -45,11 +54,27 @@ def bind_content(layout, texts, images, tables):
     text_idx = 0
     img_idx = 0
 
+    # Count how many text slots exist in this template
+    text_slots = [el for el in layout["elements"] if el["type"] == "text"]
+    text_slot_count = len(text_slots)
+    current_text_slot = 0
+
     for el in layout["elements"]:
         if el["type"] == "text" and text_idx < len(texts):
+            content = texts[text_idx]
+            
+            current_text_slot += 1
+            
+            # --- FIX: Handle Text Overflow ---
+            # If this is the LAST text slot available, append ALL remaining text here
+            if current_text_slot == text_slot_count:
+                while text_idx + 1 < len(texts):
+                    text_idx += 1
+                    content += "\n\n" + texts[text_idx]
+            
             bound.append({
                 **el,
-                "content": texts[text_idx]
+                "content": content
             })
             text_idx += 1
 
@@ -150,3 +175,4 @@ def apply_image_rules(bound_elements, layout_name):
             }
 
     return bound_elements
+
