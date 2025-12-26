@@ -32,8 +32,7 @@ def extract_slide_features(slide_dir: Path):
     avg_img_area = sum(img_areas) / len(img_areas) if img_areas else 0.0
 
     slide_density = round(num_shapes / 10.0, 2)
-
-return {
+    return {
     "slide_num": slide["slide_num"],
     "num_shapes": num_shapes,
     "num_text_blocks": num_text_blocks,
@@ -61,4 +60,4 @@ def build_features_from_ingestion(ingestion_dir):
 df_features = build_features_from_ingestion("out(3)")
 df_features.head()
 df_features.to_csv("real_layou_dataset.csv", index=False)
-
+print(df_features.columns.tolist())
