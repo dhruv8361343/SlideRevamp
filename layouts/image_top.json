@@ -1,0 +1,19 @@
+{
+  "name": "image_top",
+  "elements": [
+    {
+      "type": "image",
+      "x": 0.1,
+      "y": 0.05,
+      "width": 0.8,
+      "height": 0.45
+    },
+    {
+      "type": "text",
+      "x": 0.1,
+      "y": 0.55,
+      "width": 0.8,
+      "height": 0.35
+    }
+  ]
+}
