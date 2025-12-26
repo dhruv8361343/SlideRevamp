@@ -33,17 +33,26 @@ def extract_slide_features(slide_dir: Path):
 
     slide_density = round(num_shapes / 10.0, 2)
     return {
-    "slide_num": slide["slide_num"],
-    "num_shapes": num_shapes,
-    "num_text_blocks": num_text_blocks,
-    "total_text_length": total_text_len,
-    "avg_text_len": round(avg_text_len, 2),   
-    "num_images": num_images,
-    "largest_image_area": round(largest_img_area, 3),
-    "avg_image_area": round(avg_img_area, 3),
-    "has_table": int(len(table_shapes) > 0),
-    "slide_density": slide_density
-}
+        "slide_num": slide["slide_num"],
+        "num_shapes": num_shapes,
+        "num_text_blocks": num_text_blocks,
+        
+        # FIXED: Renamed to match model (total_text_length -> total_text_len)
+        "total_text_len": total_text_len,  
+        
+        "avg_text_len": round(avg_text_len, 2),
+        "num_images": num_images,
+        
+        # FIXED: Renamed to match model (largest_image_area -> largest_img_area)
+        "largest_img_area": round(largest_img_area, 3),
+        
+        # FIXED: Renamed to match model (avg_image_area -> avg_img_area)
+        "avg_img_area": round(avg_img_area, 3),
+        
+        "has_table": int(len(table_shapes) > 0),
+        "slide_density": slide_density
+    }
+    
 
 
 
@@ -57,7 +66,3 @@ def build_features_from_ingestion(ingestion_dir):
     return pd.DataFrame(rows)
 
 
-df_features = build_features_from_ingestion("out(3)")
-df_features.head()
-df_features.to_csv("real_layou_dataset.csv", index=False)
-print(df_features.columns.tolist())
