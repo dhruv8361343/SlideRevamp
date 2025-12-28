@@ -39,8 +39,8 @@ def split_content(slide_meta):
     tables = []
 
     for s in slide_meta["shapes"]:
-        if s["has_text"] and s["text"]:
-            texts.append(s["text"])
+        if s["has_text"] and s.get("paragraphs"):
+            texts.append(s["paragraphs"])
         if s["has_image"]:
             images.append(s["image_path"])
         if s["has_table"]:
@@ -50,46 +50,39 @@ def split_content(slide_meta):
 
 def bind_content(layout, texts, images, tables):
     bound = []
-
     text_idx = 0
     img_idx = 0
 
-    # Count how many text slots exist in this template
+    # Count text slots so we know when to merge leftover text
     text_slots = [el for el in layout["elements"] if el["type"] == "text"]
     text_slot_count = len(text_slots)
     current_text_slot = 0
 
     for el in layout["elements"]:
         if el["type"] == "text" and text_idx < len(texts):
-            content = texts[text_idx]
-            
+            # content is now a LIST of paragraphs
+            content = texts[text_idx] 
             current_text_slot += 1
             
-            # --- FIX: Handle Text Overflow ---
-            # If this is the LAST text slot available, append ALL remaining text here
+            # --- MERGE LOGIC: If this is the last slot, append all remaining text ---
             if current_text_slot == text_slot_count:
                 while text_idx + 1 < len(texts):
                     text_idx += 1
-                    content += "\n\n" + texts[text_idx]
+                    # Extend the list of paragraphs (rich text merge)
+                    content.extend(texts[text_idx])
             
             bound.append({
                 **el,
-                "content": content
+                "content": content # This is now the rich structure
             })
             text_idx += 1
 
         elif el["type"] == "image" and img_idx < len(images):
-            bound.append({
-                **el,
-                "source": images[img_idx]
-            })
+            bound.append({ **el, "source": images[img_idx] })
             img_idx += 1
 
         elif el["type"] == "table" and tables:
-            bound.append({
-                **el,
-                "source": tables[0]
-            })
+            bound.append({ **el, "source": tables[0] })
 
     return bound
 
@@ -176,5 +169,6 @@ def apply_image_rules(bound_elements, layout_name):
             }
 
     return bound_elements
+
 
 
