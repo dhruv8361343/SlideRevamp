@@ -15,8 +15,11 @@ wrote the prompt that is to be given with the output from python_extractor.py to
 
 ### (15-21 jan)
 install and run the Real-ESRGAN AND U-2-NET model
+
 created scripts to use them on extracted images(upsclae.py mask.py smart_crop.py process_image.py)
+
 created dateset for finetuning stable diffusion v1.5 (for background generation ) 
+
 fine tune stable stable diffusion v1.5  using LoRA on kohya_ss notebook
 
 
