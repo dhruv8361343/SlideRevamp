@@ -6,39 +6,49 @@ from image_processing.mask import generate_mask
 from image_processing.smart_crop import smart_crop
 
 
+
+
 def process_image(image_path):
     """
     using models for enhancing image
     """
+    # Directories
+UPSCALED_DIR = Path("/kaggle/working/outputs/images_upscaled")
+MASKS_DIR = Path("/kaggle/working/outputs/masks")
+FINAL_DIR = Path("/kaggle/working/outputs/images_final")
 
-    image_path = Path(image_path)
+# Ensure output dirs exist
+UPSCALED_DIR.mkdir(parents=True, exist_ok=True)
+MASKS_DIR.mkdir(parents=True, exist_ok=True)
+FINAL_DIR.mkdir(parents=True, exist_ok=True)
+    
 
-    # 1. Upscale
-    upscaled = upscale_image(
-    image_path,
-    "week2_assets/images_upscaled"
-)
+   # Upscale (Real-ESRGAN)
+    upscaled_path = upscale_image(
+        image_path=image_path,
+        output_dir=UPSCALED_DIR
+    )
+    
 
 
-    # 2. Generate mask
-    mask = generate_mask(
-        image_path=upscaled,
-        output_dir="week2_assets/masks"
+   #  Generate U-2-Net mask
+    mask_path = generate_mask(
+        image_path=upscaled_path,
+        output_dir=MASKS_DIR
     )
 
-    # 3. Smart crop (always)
+   #  Smart crop
     final_img = smart_crop(
-        image_path=str(upscaled),
-        mask_path=str(mask),
+        image_path=str(upscaled_path),
+        mask_path=str(mask_path),
         target_ratio=16/9
     )
 
-    # 4. Save final image
-    out_dir = Path("week2_assets/images_final")
-    out_dir.mkdir(parents=True, exist_ok=True)
 
-    out_path = out_dir / image_path.name
-    cv2.imwrite(str(out_path), final_img)
+    #  Save final image
+    final_out = FINAL_DIR / img_path.name
+    cv2.imwrite(str(final_out), final_img)
 
-    return out_path
+    return final_out
+
 
