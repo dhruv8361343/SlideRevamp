@@ -8,8 +8,7 @@ from image_processing.smart_crop import smart_crop
 
 def process_image(image_path):
     """
-    Full Week-2 image pipeline:
-    Real-ESRGAN → U-2-Net → smart crop
+    using models for enhancing image
     """
 
     image_path = Path(image_path)
@@ -42,3 +41,4 @@ def process_image(image_path):
     cv2.imwrite(str(out_path), final_img)
 
     return out_path
+
