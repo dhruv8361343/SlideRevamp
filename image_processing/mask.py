@@ -13,22 +13,21 @@ def generate_mask(image_path, output_dir):
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1️⃣ Clear input folder
+#U-2-NET doesn't allow mdoel 2 run from external path so we have to first copy our input in their test folder and then copy the results from their folder
     for f in INPUT_DIR.glob("*"):
         f.unlink()
 
-    # 2️⃣ Copy input image
+    
     temp_image = INPUT_DIR / image_path.name
     shutil.copy(image_path, temp_image)
 
-    # 3️⃣ Run U-2-Net
     subprocess.run(
         [sys.executable, "u2net_test.py"],
         cwd=U2NET_DIR,
         check=True
     )
 
-    # 4️⃣ EXPECTED output mask
+    
     expected_mask = RESULTS_DIR / f"{image_path.stem}.png"
 
     if not expected_mask.exists():
@@ -36,9 +35,9 @@ def generate_mask(image_path, output_dir):
             f"Expected U-2-Net mask not found: {expected_mask}"
         )
 
-    # 5️⃣ Copy to pipeline folder
     final_mask = output_dir / expected_mask.name
     shutil.copy(expected_mask, final_mask)
 
     return final_mask
+
 
