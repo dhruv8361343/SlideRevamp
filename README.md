@@ -21,7 +21,8 @@ created scripts to use them on extracted images(upsclae.py mask.py smart_crop.py
 created dateset for finetuning stable diffusion v1.5 (for background generation ) 
 
 fine tune stable stable diffusion v1.5  using LoRA on kohya_ss notebook
-'''python 
+
+```python 
 in GUI 
 
 for fine tuning I set the following parameters to
