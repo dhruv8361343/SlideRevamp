@@ -48,6 +48,48 @@ shuffle caption = true
 Min SNR Gamma = 5
 Noise offset = 0.05
 ```
+ loss after every 100 steps
+```python
+steps:   5%|▊               | 100/2000 [00:51<16:10,  1.96it/s, avr_loss=0.0772]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00000100.safetensors
+steps:  10%|█▌              | 200/2000 [01:43<15:29,  1.94it/s, avr_loss=0.0774]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00000200.safetensors
+steps:  15%|██▍             | 300/2000 [02:38<14:59,  1.89it/s, avr_loss=0.0705]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00000300.safetensors
+steps:  20%|███▏            | 400/2000 [03:33<14:12,  1.88it/s, avr_loss=0.0721]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00000400.safetensors
+steps:  25%|████▎            | 500/2000 [04:28<13:25,  1.86it/s, avr_loss=0.074]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00000500.safetensors
+steps:  30%|████▊           | 600/2000 [05:23<12:34,  1.85it/s, avr_loss=0.0718]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00000600.safetensors
+steps:  35%|█████▌          | 700/2000 [06:18<11:42,  1.85it/s, avr_loss=0.0735]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00000700.safetensors
+steps:  40%|██████▊          | 800/2000 [07:13<10:49,  1.85it/s, avr_loss=0.071]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00000800.safetensors
+steps:  45%|███████▏        | 900/2000 [08:08<09:56,  1.84it/s, avr_loss=0.0706]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00000900.safetensors
+steps:  50%|████████▌        | 1000/2000 [09:02<09:02,  1.84it/s, avr_loss=0.07]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001000.safetensors
+steps:  55%|████████▊       | 1100/2000 [09:57<08:08,  1.84it/s, avr_loss=0.071]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001100.safetensors
+steps:  60%|█████████      | 1200/2000 [10:52<07:14,  1.84it/s, avr_loss=0.0704]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001200.safetensors
+steps:  65%|██████████▍     | 1300/2000 [11:47<06:20,  1.84it/s, avr_loss=0.071]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001300.safetensors
+steps:  70%|██████████▌    | 1400/2000 [12:42<05:26,  1.84it/s, avr_loss=0.0708]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001400.safetensors
+steps:  75%|████████████▊    | 1500/2000 [13:36<04:32,  1.84it/s, avr_loss=0.07]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001500.safetensors
+steps:  80%|████████████   | 1600/2000 [14:31<03:37,  1.84it/s, avr_loss=0.0695]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001600.safetensors
+steps:  85%|████████████▊  | 1700/2000 [15:26<02:43,  1.83it/s, avr_loss=0.0697]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001700.safetensors
+steps:  90%|█████████████▌ | 1800/2000 [16:21<01:49,  1.83it/s, avr_loss=0.0693]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001800.safetensors
+steps:  95%|██████████████▎| 1900/2000 [17:16<00:54,  1.83it/s, avr_loss=0.0694]
+saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001900.safetensors
+steps: 100%|███████████████| 2000/2000 [18:11<00:00,  1.83it/s, avr_loss=0.0692]
+```
 
 ### (23-29 jan)
 created script for generating synthetic data for layout generator
