@@ -91,6 +91,7 @@ saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001900.sa
 steps: 100%|███████████████| 2000/2000 [18:11<00:00,  1.83it/s, avr_loss=0.0692]
 ```
 
+
 ### (23-29 jan)
 created script for generating synthetic data for layout generator
 
