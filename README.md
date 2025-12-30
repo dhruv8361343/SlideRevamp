@@ -90,7 +90,7 @@ steps:  95%|██████████████▎| 1900/2000 [17:16<00:5
 saving checkpoint: /kaggle/working/kohya_ss/kohya_ss/models/last-step00001900.safetensors
 steps: 100%|███████████████| 2000/2000 [18:11<00:00,  1.83it/s, avr_loss=0.0692]
 ```
-
+<img width="1410" height="770" alt="Image" src="https://github.com/user-attachments/assets/9c53404b-7382-4192-9040-da2bc1c0f793" />
 
 ### (23-29 jan)
 created script for generating synthetic data for layout generator
