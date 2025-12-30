@@ -24,53 +24,30 @@ fine tune stable stable diffusion v1.5  using LoRA on kohya_ss notebook
 
 ```python 
 in GUI 
-
 for fine tuning I set the following parameters to
 Train batch size =1
-
 Epoch = 10
-
 Max train steps = 2000
-
 LR Scheduler = cosine
-
 Optimizer = AdamW8bit
-
 Max grad norm = 8
-
 Learninf Rate = 0.0001
-
 LR warmup = 100
-
 LR# cycles = 1
-
 Text Encoder learning rate = 0.0005
-
 Unet learning rate =0.0001
-
 network rank = 16
-
 network alpha = 16
-
 Gredient accumulate steps =1
-
 Save every N steps =100
-
-
 Keep n tokens =1
-
 Max token length = 75
-
 gradient check pointing = true
-
 shuffle caption = true
-
 (for avoiding over fitting)
-
 Min SNR Gamma = 5
-
 Noise offset = 0.05
-'''
+```
 
 ### (23-29 jan)
 created script for generating synthetic data for layout generator
