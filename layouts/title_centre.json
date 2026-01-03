@@ -1,33 +1,33 @@
-"title_center": {
-    "name": "title_center",
-    "background_color": "FFFFFF",
-    "elements": [
-      {
-        "type": "text",
-        "x": 0.1,
-        "y": 0.35,
-        "width": 0.8,
-        "height": 0.25,
-        "z": 10,
-        "style": {
-          "font_size": 54,
-          "bold": true,
-          "align": "center",
-          "color": "000000"
-        }
-      },
-      {
-        "type": "text",
-        "x": 0.2,
-        "y": 0.65,
-        "width": 0.6,
-        "height": 0.15,
-        "z": 5,
-        "style": {
-          "font_size": 28,
-          "align": "center",
-          "color": "555555"
-        }
+{
+  "name": "title_center",
+  "background_color": "FFFFFF",
+  "elements": [
+    {
+      "type": "text",
+      "x": 0.1,
+      "y": 0.35,
+      "width": 0.8,
+      "height": 0.25,
+      "z": 10,
+      "style": {
+        "font_size": 54,
+        "bold": true,
+        "align": "center",
+        "color": "000000"
       }
-    ]
-  }
+    },
+    {
+      "type": "text",
+      "x": 0.2,
+      "y": 0.65,
+      "width": 0.6,
+      "height": 0.15,
+      "z": 5,
+      "style": {
+        "font_size": 28,
+        "align": "center",
+        "color": "555555"
+      }
+    }
+  ]
+}
