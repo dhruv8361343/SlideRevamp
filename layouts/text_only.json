@@ -1,5 +1,4 @@
-{
-  "text_only": {
+"text_only": {
     "name": "text_only",
     "background_color": "FFFFFF",
     "elements": [
@@ -16,4 +15,19 @@
           "align": "left",
           "color": "000000"
         }
+      },
+      {
+        "type": "text",
+        "x": 0.05,
+        "y": 0.25,
+        "width": 0.9,
+        "height": 0.65,
+        "z": 5,
+        "style": {
+          "font_size": 24,
+          "align": "left",
+          "color": "333333"
+        }
       }
+    ]
+  }
