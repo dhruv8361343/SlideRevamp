@@ -8,4 +8,5 @@
             {"type": "text", "x": 0.36, "y": 0.25, "width": 0.28, "height": 0.65, "z": 5, "style": {"font_size": 18, "align": "left"}},
             {"type": "text", "x": 0.67, "y": 0.25, "width": 0.28, "height": 0.65, "z": 5, "style": {"font_size": 18, "align": "left"}}
         ]
-    },
+    }
+
