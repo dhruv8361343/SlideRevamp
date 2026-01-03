@@ -1,43 +1,43 @@
-"two_column": {
-    "name": "two_column",
-    "background_color": "FFFFFF",
-    "elements": [
-      {
-        "type": "text",
-        "x": 0.05,
-        "y": 0.05,
-        "width": 0.9,
-        "height": 0.15,
-        "z": 10,
-        "style": {
-          "font_size": 40,
-          "bold": true,
-          "align": "left"
-        }
-      },
-      {
-        "type": "text",
-        "x": 0.05,
-        "y": 0.25,
-        "width": 0.42,
-        "height": 0.65,
-        "z": 5,
-        "style": {
-          "font_size": 20,
-          "align": "left"
-        }
-      },
-      {
-        "type": "text",
-        "x": 0.53,
-        "y": 0.25,
-        "width": 0.42,
-        "height": 0.65,
-        "z": 5,
-        "style": {
-          "font_size": 20,
-          "align": "left"
-        }
+{
+  "name": "two_column",
+  "background_color": "FFFFFF",
+  "elements": [
+    {
+      "type": "text",
+      "x": 0.05,
+      "y": 0.05,
+      "width": 0.9,
+      "height": 0.15,
+      "z": 10,
+      "style": {
+        "font_size": 40,
+        "bold": true,
+        "align": "left"
       }
-    ]
-  }
+    },
+    {
+      "type": "text",
+      "x": 0.05,
+      "y": 0.25,
+      "width": 0.42,
+      "height": 0.65,
+      "z": 5,
+      "style": {
+        "font_size": 20,
+        "align": "left"
+      }
+    },
+    {
+      "type": "text",
+      "x": 0.53,
+      "y": 0.25,
+      "width": 0.42,
+      "height": 0.65,
+      "z": 5,
+      "style": {
+        "font_size": 20,
+        "align": "left"
+      }
+    }
+  ]
+}
