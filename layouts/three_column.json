@@ -1,0 +1,11 @@
+"three_column": {
+        "name": "three_column",
+        "background_color": "FFFFFF",
+        "elements": [
+            {"type": "text", "x": 0.05, "y": 0.05, "width": 0.90, "height": 0.15, "z": 10, "style": {"font_size": 40, "bold": True, "align": "center"}},
+            # Col 1, 2, 3
+            {"type": "text", "x": 0.05, "y": 0.25, "width": 0.28, "height": 0.65, "z": 5, "style": {"font_size": 18, "align": "left"}},
+            {"type": "text", "x": 0.36, "y": 0.25, "width": 0.28, "height": 0.65, "z": 5, "style": {"font_size": 18, "align": "left"}},
+            {"type": "text", "x": 0.67, "y": 0.25, "width": 0.28, "height": 0.65, "z": 5, "style": {"font_size": 18, "align": "left"}}
+        ]
+    },
