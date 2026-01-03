@@ -1,0 +1,12 @@
+"image_top": {
+        "layout": "image_top",
+        "background_color": "FFFFFF",
+        "elements": [
+            # Image across top
+            {"type": "image", "x": 0.00, "y": 0.00, "width": 1.00, "height": 0.45, "fit": "cover"},
+            # Title below image
+            {"type": "text",  "x": 0.05, "y": 0.50, "width": 0.90, "height": 0.15, "font_size": 36, "style": {"align": "left", "bold": True}},
+            # Body at bottom
+            {"type": "text",  "x": 0.05, "y": 0.68, "width": 0.90, "height": 0.27, "font_size": 20, "style": {"align": "left"}}
+        ]
+    },
