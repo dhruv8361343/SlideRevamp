@@ -7,4 +7,4 @@
             # Body
             {"type": "text", "x": 0.05, "y": 0.25, "width": 0.90, "height": 0.65, "z": 5, "style": {"font_size": 24, "align": "left", "color": "333333"}}
         ]
-    },
+    }
