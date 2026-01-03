@@ -1,12 +1,42 @@
-"image_bottom": {
-        "layout": "image_bottom",
-        "background_color": "FFFFFF",
-        "elements": [
-            # Title at top
-            {"type": "text",  "x": 0.05, "y": 0.05, "width": 0.90, "height": 0.15, "font_size": 36, "style": {"align": "left", "bold": True}},
-            # Body in middle
-            {"type": "text",  "x": 0.05, "y": 0.25, "width": 0.90, "height": 0.25, "font_size": 20, "style": {"align": "left"}},
-            # Image across bottom
-            {"type": "image", "x": 0.00, "y": 0.55, "width": 1.00, "height": 0.45, "fit": "cover"}
-        ]
+{
+  "name": "image_bottom",
+  "background_color": "FFFFFF",
+  "elements": [
+    {
+      "type": "text",
+      "x": 0.05,
+      "y": 0.05,
+      "width": 0.9,
+      "height": 0.15,
+      "z": 5,
+      "style": {
+        "font_size": 36,
+        "bold": true,
+        "align": "left"
+      }
     },
+    {
+      "type": "text",
+      "x": 0.05,
+      "y": 0.25,
+      "width": 0.9,
+      "height": 0.25,
+      "z": 5,
+      "style": {
+        "font_size": 20,
+        "align": "left"
+      }
+    },
+    {
+      "type": "image",
+      "x": 0.0,
+      "y": 0.55,
+      "width": 1.0,
+      "height": 0.45,
+      "z": 0,
+      "style": {
+        "fit": "cover"
+      }
+    }
+  ]
+}
