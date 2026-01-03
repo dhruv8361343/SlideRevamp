@@ -1,0 +1,12 @@
+"image_right": {
+        "layout": "image_right",
+        "background_color": "FFFFFF",
+        "elements": [
+            # Title on Left
+            {"type": "text",  "x": 0.05, "y": 0.10, "width": 0.45, "height": 0.20, "font_size": 36, "style": {"align": "left", "bold": True}},
+            # Body on Left
+            {"type": "text",  "x": 0.05, "y": 0.35, "width": 0.45, "height": 0.55, "font_size": 22, "style": {"align": "left"}},
+            # Image on Right Half
+            {"type": "image", "x": 0.55, "y": 0.00, "width": 0.45, "height": 1.00, "fit": "cover"}
+        ]
+    },
