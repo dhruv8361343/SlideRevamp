@@ -1,0 +1,10 @@
+"title_center": {
+        "name": "title_center",
+        "background_color": "FFFFFF",
+        "elements": [
+            # Main Title
+            {"type": "text", "x": 0.10, "y": 0.35, "width": 0.80, "height": 0.25, "z": 10, "style": {"font_size": 54, "bold": True, "align": "center", "color": "000000"}},
+            # Subtitle
+            {"type": "text", "x": 0.20, "y": 0.65, "width": 0.60, "height": 0.15, "z": 5, "style": {"font_size": 28, "align": "center", "color": "555555"}}
+        ]
+    },
