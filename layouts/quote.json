@@ -1,0 +1,33 @@
+{
+  "name": "quote",
+  "background_color": "222222",
+  "elements": [
+    {
+      "type": "text",
+      "x": 0.15,
+      "y": 0.3,
+      "width": 0.7,
+      "height": 0.4,
+      "z": 5,
+      "style": {
+        "font_size": 36,
+        "italic": true,
+        "align": "center",
+        "color": "FFFFFF"
+      }
+    },
+    {
+      "type": "text",
+      "x": 0.5,
+      "y": 0.75,
+      "width": 0.35,
+      "height": 0.1,
+      "z": 5,
+      "style": {
+        "font_size": 20,
+        "align": "right",
+        "color": "AAAAAA"
+      }
+    }
+  ]
+}
