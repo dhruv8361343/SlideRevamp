@@ -1,9 +1,15 @@
-{
-  "name": "image_grid",
-  "elements": [
-    { "type": "image", "slot": 0, "x": 0.05, "y": 0.1, "width": 0.4, "height": 0.35 },
-    { "type": "image", "slot": 1, "x": 0.55, "y": 0.1, "width": 0.4, "height": 0.35 },
-    { "type": "image", "slot": 2, "x": 0.05, "y": 0.55, "width": 0.4, "height": 0.35 },
-    { "type": "image", "slot": 3, "x": 0.55, "y": 0.55, "width": 0.4, "height": 0.35 }
-  ]
-}
+"image_grid": {
+        "layout": "image_grid",
+        "background_color": "FFFFFF",
+        "elements": [
+            {"type": "text",  "x": 0.05, "y": 0.05, "width": 0.90, "height": 0.10, "font_size": 32, "style": {"align": "center", "bold": True}},
+            # Top Left
+            {"type": "image", "x": 0.10, "y": 0.20, "width": 0.38, "height": 0.35, "fit": "cover"},
+            # Top Right
+            {"type": "image", "x": 0.52, "y": 0.20, "width": 0.38, "height": 0.35, "fit": "cover"},
+            # Bottom Left
+            {"type": "image", "x": 0.10, "y": 0.60, "width": 0.38, "height": 0.35, "fit": "cover"},
+            # Bottom Right
+            {"type": "image", "x": 0.52, "y": 0.60, "width": 0.38, "height": 0.35, "fit": "cover"}
+        ]
+    },
