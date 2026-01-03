@@ -1,0 +1,11 @@
+"two_column": {
+        "name": "two_column",
+        "background_color": "FFFFFF",
+        "elements": [
+            {"type": "text", "x": 0.05, "y": 0.05, "width": 0.90, "height": 0.15, "z": 10, "style": {"font_size": 40, "bold": True, "align": "left"}},
+            # Left Col
+            {"type": "text", "x": 0.05, "y": 0.25, "width": 0.42, "height": 0.65, "z": 5, "style": {"font_size": 20, "align": "left"}},
+            # Right Col
+            {"type": "text", "x": 0.53, "y": 0.25, "width": 0.42, "height": 0.65, "z": 5, "style": {"font_size": 20, "align": "left"}}
+        ]
+    }
