@@ -7,4 +7,4 @@
             # Subtitle
             {"type": "text", "x": 0.20, "y": 0.65, "width": 0.60, "height": 0.15, "z": 5, "style": {"font_size": 28, "align": "center", "color": "555555"}}
         ]
-    },
+    }
