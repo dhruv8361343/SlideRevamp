@@ -1,29 +1,10 @@
-{
-  "name": "text_only",
-  "elements": [
-    {
-      "type": "text",
-      "name": "title",
-      "x": 0.05,
-      "y": 0.05,
-      "width": 0.9,
-      "height": 0.15,
-      "style": {
-        "align": "left",
-        "bold": true
-      }
+"text_only": {
+        "name": "text_only",
+        "background_color": "FFFFFF",
+        "elements": [
+            # Title (Top layer, just in case)
+            {"type": "text", "x": 0.05, "y": 0.05, "width": 0.90, "height": 0.15, "z": 10, "style": {"font_size": 40, "bold": True, "align": "left", "color": "000000"}},
+            # Body
+            {"type": "text", "x": 0.05, "y": 0.25, "width": 0.90, "height": 0.65, "z": 5, "style": {"font_size": 24, "align": "left", "color": "333333"}}
+        ]
     },
-    {
-      "type": "text",
-      "name": "body",
-      "x": 0.05,
-      "y": 0.25,
-      "width": 0.9,
-      "height": 0.65,
-      "style": {
-        "align": "left"
-      }
-    }
-  ]
-}
-
