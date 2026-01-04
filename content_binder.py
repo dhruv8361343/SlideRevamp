@@ -1,5 +1,6 @@
 
 import math
+from pptx.enum.text import MSO_AUTO_SIZE
 
 
 
@@ -223,5 +224,6 @@ def apply_image_rules(bound_elements, layout_name):
             }
 
     return bound_elements
+
 
 
