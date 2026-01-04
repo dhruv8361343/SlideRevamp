@@ -7,6 +7,7 @@ import csv
 from PIL import Image
 import os
 from pathlib import Path
+from pptx.enum.text import MSO_AUTO_SIZE
 
 prs = Presentation()
 
@@ -36,6 +37,7 @@ def add_text(slide, el):
     box = slide.shapes.add_textbox(l, t, w, h)
     tf = box.text_frame
     tf.word_wrap = True
+    tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
     
     # 1. Alignment Mapping
     align_map = {
@@ -76,14 +78,21 @@ def add_text(slide, el):
             extracted_size = run_data.get("font_size_pt")
             layout_default = el.get("font_size", 18)
             # Use extracted size if valid, else layout rule
-            final_size = extracted_size if extracted_size else layout_default
+            if extracted_size and extracted_size < layout_default:
+                final_size = extracted_size
+            else:
+                final_size = layout_default
             font.size = Pt(final_size)
             
             # Color
-            hex_color = run_data.get("color_rgb")
+            hex_color = run_data.get("color_rgb") or run_data.get("font_color")
             if hex_color:
                 try:
-                    font.color.rgb = RGBColor.from_string(str(hex_color).replace("#", ""))
+                    # FIX: Robust cleaning of the hex string
+                    clean_hex = str(hex_color).replace("#", "").strip()
+                    # Basic check to ensure it's a valid hex code (6 chars)
+                    if len(clean_hex) == 6:
+                        font.color.rgb = RGBColor.from_string(clean_hex)
                 except:
                     pass
                     
