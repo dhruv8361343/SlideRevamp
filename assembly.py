@@ -121,26 +121,33 @@ def add_text(slide, el):
             runs_to_process = para_data.get("runs", [])
         else:
             # If para_data is just a list of runs directly
-            runs_to_process = para_dat
+            runs_to_process = para_data
         
         
-        for run_data in para_data:
+        for run_data in runs_to_process:
             run = p.add_run()
-            run.text = run_data.get("text", "")
-            font = run.font
             
-            # Formatting
-            if run_data.get("bold"): font.bold = True
-            
-            
-            color_val = run_data.get("color_rgb") or run_data.get("font_color")
-            apply_font_color(font, color_val)
-            
-            # Size logic
-            layout_default = el.get("font_size", 18)
-            font.size = Pt(layout_default) # Prioritize layout size for density control
+            # --- FIX STARTS HERE ---
+            if isinstance(run_data, str):
+                # If it's just a string, apply it directly
+                run.text = run_data
+                font = run.font
+            else:
+                # If it's a dictionary, extract text and formatting
+                run.text = run_data.get("text", "")
+                font = run.font
+                if run_data.get("bold"): font.bold = True
                     
+                color_val = run_data.get("color_rgb") or run_data.get("font_color")
+                apply_font_color(font, color_val)
 
+            # Apply font size (either from run, element, or default 18)
+            size = 18
+            if isinstance(run_data, dict):
+                size = run_data.get("font_size") or el.get("font_size", 18)
+            else:
+                size = el.get("font_size", 18)
+            font.size = Pt(size)
 
 
 
