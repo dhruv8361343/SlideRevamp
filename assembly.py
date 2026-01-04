@@ -116,11 +116,12 @@ def add_text(slide, el):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
         p.alignment = align_enum
         
-        if isinstance(para_obj, dict):
-            p.level = para_obj.get("level", 0)  # This applies the bullet indent
-            para_runs = para_obj.get("runs", [])
+        if isinstance(para_data, dict):
+            p.level = para_data.get("level", 0)
+            runs_to_process = para_data.get("runs", [])
         else:
-            para_runs = para_obj # Fallback for old data formats
+            # If para_data is just a list of runs directly
+            runs_to_process = para_dat
         
         
         for run_data in para_data:
