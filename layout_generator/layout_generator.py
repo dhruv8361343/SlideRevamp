@@ -24,6 +24,9 @@ def predict_layout(features, top_k=2):
         "slide_density"]
     X = build_model_input(features, FEATURE_COLUMNS)
 
+    layout_model = joblib.load("/kaggle/input/weights-for-layout-generator/layout_generator_xgb (4).pkl")
+    label_encoder = joblib.load("/kaggle/input/weights-for-layout-generator/layout_label_encoder (4).pkl")
+
     probs = layout_model.predict_proba(X)[0]
 
     top_indices = np.argsort(probs)[-top_k:][::-1]
@@ -42,4 +45,5 @@ def load_layout_template(layout_name):
     if not path.exists():
         raise ValueError(f"Layout template not found: {layout_name}")
     return json.loads(path.read_text())
+
 
