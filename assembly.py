@@ -16,16 +16,17 @@ ASSETS_DIR = Path("/kaggle/working/outputs")
 
 
 def apply_background(slide, bg_path):
-    slide_width = slide.part.slide_layout.part.slide_width
-    slide_height = slide.part.slide_layout.part.slide_height
+    slide_width = slide.part.slide_width
+    slide_height = slide.part.slide_height
 
     slide.shapes.add_picture(
         str(bg_path),
-        left=Inches(0),
-        top=Inches(0),
-        width=slide_width,
-        height=slide_height
+        0,
+        0,
+        slide_width,
+        slide_height
     )
+
 def n2pt(x, y, w, h):
     return (
         int(x * prs.slide_width),
