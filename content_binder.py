@@ -19,73 +19,40 @@ def split_content(slide_meta):
 
 def bind_content(layout, texts, images, tables):
     bound = []
-    
-    # 1. Flatten all text into a single list of paragraphs
     all_paragraphs = []
     for text_block in texts:
-        if isinstance(text_block, list):
-            all_paragraphs.extend(text_block)
-        else:
-            all_paragraphs.append(text_block)
+        all_paragraphs.extend(text_block if isinstance(text_block, list) else [text_block])
 
-
-
-    # Calculate Text Distribution  
-    text_slots = [el for el in layout["elements"] if el["type"] == "text"]
-    num_text_slots = len(text_slots)
+    text_slots = [i for i, el in enumerate(layout["elements"]) if el["type"] == "text"]
+    num_slots = len(text_slots)
     
-    # Create empty lists for each slot
-    slot_contents = [[] for _ in range(num_text_slots)]
+    # Create buckets for each text slot
+    slot_buckets = [[] for _ in range(num_slots)]
     
-    # Distribute paragraphs round-robin
-    if num_text_slots > 0:
-        for i, para in enumerate(all_paragraphs):
-            slot_contents[i % num_text_slots].append(para)
+    # Distribute paragraphs evenly across all boxes (Round Robin)
+    if num_slots > 0:
+        for idx, para in enumerate(all_paragraphs):
+            slot_buckets[idx % num_slots].append(para)
 
-    current_slot_idx = 0
-    for el in layout["elements"]:
-        if el["type"] == "text":
-            bound.append({
-                **el,
-                "content": slot_contents[current_slot_idx]
-            })
-            current_slot_idx += 1
-            
-    # Prepare Iterators for Images/Tables
     img_iter = iter(images)
     table_iter = iter(tables)
-    
-    # Track which text bucket we are currently processing
-    text_bucket_idx = 0
+    text_count = 0
 
-    # 3. Bind Elements
-    for i, el in enumerate(layout["elements"]):
-        new_el = el.copy() # Create a copy to avoid modifying template
-        
+    for el in layout["elements"]:
+        new_el = el.copy()
         if el["type"] == "text":
-            # Grab the pre-assigned bucket of paragraphs
-            if text_bucket_idx < len(slot_allocations):
-                new_el["content"] = slot_allocations[text_bucket_idx]
-                text_bucket_idx += 1
-            else:
-                new_el["content"] = []
+            new_el["content"] = slot_buckets[text_count]
+            text_count += 1
             bound.append(new_el)
-
         elif el["type"] == "image":
-            try:
-                new_el["source"] = next(img_iter)
-                bound.append(new_el)
-            except StopIteration:
-                pass # Skip if no images left
-
+            try: new_el["source"] = next(img_iter); bound.append(new_el)
+            except: pass
         elif el["type"] == "table":
-            try:
-                new_el["source"] = next(table_iter)
-                bound.append(new_el)
-            except StopIteration:
-                pass
+            try: new_el["source"] = next(table_iter); bound.append(new_el)
+            except: pass
 
     return bound
+    
 def compute_density(text_list, box):
     """
     Calculates characters per unit of area.
@@ -208,6 +175,7 @@ def apply_image_rules(bound_elements, layout_name):
             }
 
     return bound_elements
+
 
 
 
