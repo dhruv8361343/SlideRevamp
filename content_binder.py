@@ -1,6 +1,6 @@
 
 import math
-from pptx.enum.text import MSO_AUTO_SIZE
+
 
 
 
@@ -49,7 +49,7 @@ def bind_content(layout, texts, images, tables):
     
     if num_text_slots > 0 and all_paragraphs:
         avg_paras = len(all_paragraphs) / num_text_slots
-        chunk_size = math.ceil(avg_paras)
+        chunk_size = max(1,round(avg_paras))
     else:
         chunk_size = 0
 
@@ -127,16 +127,16 @@ def choose_font_size(density):
     # Density thresholds (tuned for 0-1 normalized coordinates)
     # Example: 200 chars in a 0.5x0.5 box (0.25 area) = 800 density
     
-    if density < 500:       # Very sparse text
+    if density < 200:       # Titles only
         return 28
-    elif density < 1000:    # Normal bullet points
+    elif density < 600:     # Short bullets
         return 24
-    elif density < 1500:    # Dense paragraph
+    elif density < 1200:    # Normal paragraph
         return 18
-    elif density < 2500:    # Very dense
+    elif density < 2500:    # Dense text
         return 14
-    else:                   # "Wall of text" - preventative measure
-        return 11
+    else:                   # Wall of text
+        return 10           # Go smaller to ensure fit
 
 def choose_line_spacing(font_size):
     # Smaller fonts need slightly more breathing room proportionally, 
@@ -224,6 +224,7 @@ def apply_image_rules(bound_elements, layout_name):
             }
 
     return bound_elements
+
 
 
 
