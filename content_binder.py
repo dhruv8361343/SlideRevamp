@@ -28,19 +28,29 @@ def bind_content(layout, texts, images, tables):
         else:
             all_paragraphs.append(text_block)
 
-    # 2. Identify Text Slots & Pre-calculate Distribution (Round Robin)
-    text_layout_indices = [i for i, el in enumerate(layout["elements"]) if el["type"] == "text"]
-    num_text_slots = len(text_layout_indices)
+
+
+    # Calculate Text Distribution  
+    text_slots = [el for el in layout["elements"] if el["type"] == "text"]
+    num_text_slots = len(text_slots)
     
-    # Create buckets for each slot
-    slot_allocations = [[] for _ in range(num_text_slots)]
+    # Create empty lists for each slot
+    slot_contents = [[] for _ in range(num_text_slots)]
     
-    # Distribute paragraphs evenly (Card dealing style)
+    # Distribute paragraphs round-robin
     if num_text_slots > 0:
         for i, para in enumerate(all_paragraphs):
-            target_bucket = i % num_text_slots
-            slot_allocations[target_bucket].append(para)
+            slot_contents[i % num_text_slots].append(para)
 
+    current_slot_idx = 0
+    for el in layout["elements"]:
+        if el["type"] == "text":
+            bound.append({
+                **el,
+                "content": slot_contents[current_slot_idx]
+            })
+            current_slot_idx += 1
+            
     # Prepare Iterators for Images/Tables
     img_iter = iter(images)
     table_iter = iter(tables)
@@ -198,6 +208,7 @@ def apply_image_rules(bound_elements, layout_name):
             }
 
     return bound_elements
+
 
 
 
