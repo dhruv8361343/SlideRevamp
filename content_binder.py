@@ -54,18 +54,18 @@ def bind_content(layout, texts, images, tables):
     return bound
     
 def compute_density(text_list, box):
-    """
-    Calculates characters per unit of area.
-    text_list: List of strings (paragraphs)
-    box: dict with width & height (normalized 0-1)
-    """
     if not text_list:
         return 0
         
-    # Joining the list to count actual characters, not just number of paragraphs
-    total_chars = sum(len(p) for p in text_list)
+    # CHANGE: Access the text within the new run/level dictionary structure
+    total_chars = 0
+    for para in text_list:
+        if isinstance(para, dict):
+            # Sum the length of text in every run
+            total_chars += sum(len(run.get("text", "")) for run in para.get("runs", []))
+        else:
+            total_chars += len(str(para))
     
-    # Avoid division by zero
     area = box.get("width", 0.1) * box.get("height", 0.1)
     if area == 0:
         return float("inf")
@@ -175,6 +175,7 @@ def apply_image_rules(bound_elements, layout_name):
             }
 
     return bound_elements
+
 
 
 
