@@ -178,7 +178,7 @@ def assemble_slide(prs, slide_json, bg_path):
 
     apply_background(slide, bg_path)
 
-    sorted_elements = sorted(slide_json["elements"], key=lambda x: x.get("z", 0)
+    sorted_elements = sorted(slide_json["elements"], key=lambda x: x.get("z", 0))
 
     for el in slide_json["elements"]:
         if el["type"] == "text":
