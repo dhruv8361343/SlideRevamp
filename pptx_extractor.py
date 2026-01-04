@@ -159,7 +159,10 @@ def extract(pptx_path: Path, out_dir: Path):
                             except Exception:
                                 pass
                             runs.append(run_meta)
-                        paras.append(runs)
+                        paras.append({
+                            "level": p.level,
+                            "runs": runs
+                        })
                     base["paragraphs"] = paras
             except Exception:
                 # fallback: include XML snapshot to debug
@@ -289,3 +292,4 @@ if __name__ == "__main__":
     pptx_path = Path(sys.argv[1])
     out_dir = Path(sys.argv[2])
     extract(pptx_path, out_dir)
+
