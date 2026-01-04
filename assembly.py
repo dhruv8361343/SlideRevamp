@@ -7,7 +7,7 @@ import csv
 from PIL import Image
 import os
 from pathlib import Path
-from pptx.enum.text import MSO_AUTO_SIZE
+from pptx.enum.text import MSO_AUTO_SIZE,PP_ALIGN
 
 prs = Presentation()
 
@@ -30,71 +30,93 @@ def n2pt(x, y, w, h):
         int(w * prs.slide_width),
         int(h * prs.slide_height)
     )
+def safe_apply_color(font, color_data):
+    """Robustly applies color from various formats (hex, tuple, name)."""
+    if not color_data:
+        return
 
+    # Clean string
+    c_str = str(color_data).lower().replace("#", "").replace(" ", "").replace("(", "").replace(")", "")
+    
+    # Handle known names manually if needed
+    if "green" in c_str: 
+        font.color.rgb = RGBColor(0, 128, 0)
+        return
+        
+    # Handle Hex (6 chars)
+    if len(c_str) == 6:
+        try:
+            font.color.rgb = RGBColor.from_string(c_str)
+        except: pass
+    
+    # Handle Tuple string '0,255,0'
+    elif "," in c_str:
+        try:
+            parts = c_str.split(",")
+            if len(parts) >= 3:
+                font.color.rgb = RGBColor(int(parts[0]), int(parts[1]), int(parts[2]))
+        except: pass
 def add_text(slide, el):
     l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
     
     box = slide.shapes.add_textbox(l, t, w, h)
     tf = box.text_frame
     tf.word_wrap = True
-    tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE
+    # CRITICAL FIX: Auto-size must be set on the text_frame
+    tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE 
     
-    # 1. Alignment Mapping
+    # Alignment Mapping
     align_map = {
         "left": PP_ALIGN.LEFT,
         "center": PP_ALIGN.CENTER,
         "right": PP_ALIGN.RIGHT,
         "justify": PP_ALIGN.JUSTIFY
     }
-    # Default to Left if not found
     layout_align = el.get("style", {}).get("align", "left")
     align_enum = align_map.get(layout_align, PP_ALIGN.LEFT)
 
     content_data = el.get("content", [])
 
-    # Legacy check for simple strings
     if isinstance(content_data, str):
         p = tf.paragraphs[0]
         p.text = content_data
         p.alignment = align_enum
         return
 
-    # 2. Iterate Paragraphs
     for i, para_data in enumerate(content_data):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
         p.alignment = align_enum
         
-        # 3. Iterate Runs
+        # Check if para_data is a list of runs or a simple dict/string
+        # (Binder flattening might leave mixed types, safe check:)
+        if not isinstance(para_data, list):
+             # Try to extract text if it's a dict, else stringify
+             p.text = para_data.get("text", "") if isinstance(para_data, dict) else str(para_data)
+             continue
+
         for run_data in para_data:
             run = p.add_run()
             run.text = run_data.get("text", "")
             
             font = run.font
-            if run_data.get("bold"): font.bold = True
-            if run_data.get("italic"): font.italic = True
-            if run_data.get("underline"): font.underline = True
+            # Flexible Key Checks
+            if run_data.get("bold") or run_data.get("font_bold"): font.bold = True
+            if run_data.get("italic") or run_data.get("font_italic"): font.italic = True
             
-            # Size
-            extracted_size = run_data.get("font_size_pt")
-            layout_default = el.get("font_size", 18)
-            # Use extracted size if valid, else layout rule
-            if extracted_size and extracted_size < layout_default:
-                final_size = extracted_size
-            else:
-                final_size = layout_default
-            font.size = Pt(final_size)
+            # COLOR FIX: Use the robust helper
+            raw_color = run_data.get("color_rgb") or run_data.get("font_color")
+            safe_apply_color(font, raw_color)
             
-            # Color
-            hex_color = run_data.get("color_rgb") or run_data.get("font_color")
-            if hex_color:
-                try:
-                    # FIX: Robust cleaning of the hex string
-                    clean_hex = str(hex_color).replace("#", "").strip()
-                    # Basic check to ensure it's a valid hex code (6 chars)
-                    if len(clean_hex) == 6:
-                        font.color.rgb = RGBColor.from_string(clean_hex)
-                except:
-                    pass
+            # SIZE FIX:
+            # Do NOT set font.size here if you want Auto-Fit to work perfectly.
+            # However, if you must set a MAX size, set it larger than needed.
+            # Ideally, rely on the "style" -> "font_size" from layout only.
+            
+            # Only apply explicit size if it's notably different/header
+            # Otherwise let Auto-Fit handle the shrinking.
+            layout_size = el.get("font_size", 18)
+            if layout_size > 24: # Only enforce size for Titles/Headers
+                 font.size = Pt(layout_size)
                     
 
 
