@@ -6,6 +6,7 @@ from pptx.enum.text import PP_ALIGN
 import csv
 from PIL import Image
 import os
+from pathlib import Path
 
 prs = Presentation()
 
