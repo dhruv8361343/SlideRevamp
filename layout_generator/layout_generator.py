@@ -9,6 +9,19 @@ def build_model_input(features, feature_columns):
     return pd.DataFrame([row])
 
 def predict_layout(features, top_k=2):
+    FEATURE_COLUMNS = [
+        "num_text_blocks",
+        "total_text_length",
+        "avg_text_len",
+        "num_images",
+        "largest_image_area",
+        "avg_image_area",
+        "img_aspect_ratio",
+        "has_table",
+        "has_quote",
+        "has_digits",
+        "is_agenda",
+        "slide_density"]
     X = build_model_input(features, FEATURE_COLUMNS)
 
     probs = layout_model.predict_proba(X)[0]
@@ -29,3 +42,4 @@ def load_layout_template(layout_name):
     if not path.exists():
         raise ValueError(f"Layout template not found: {layout_name}")
     return json.loads(path.read_text())
+
