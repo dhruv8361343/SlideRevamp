@@ -46,6 +46,6 @@ def update_all_slides(base_dir):
         for slide_json in slide_dir.glob("*_metadata.json"):
             update_slide_metadata_images(slide_json, base_dir)
 
-    print("✅ All slide metadata updated with enhanced image paths."
+    print(" All slide metadata updated with enhanced image paths.")
   
 
