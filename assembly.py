@@ -78,12 +78,6 @@ def parse_color(color_val):
             return RGBColor(rgb[0], rgb[1], rgb[2])
         except: pass
     return None
-
-# Inside add_text run loop, replace the color block with:
-            hex_color = run_data.get("color_rgb") or run_data.get("font_color")
-            parsed = parse_color(hex_color)
-            if parsed:
-                font.color.rgb = parsed
                 
 def apply_font_color(font, color_val):
     """Handles colors whether they are Hex strings or Integers (from the extractor)."""
@@ -110,10 +104,13 @@ def add_text(slide, el):
     box = slide.shapes.add_textbox(l, t, w, h)
     tf = box.text_frame
     tf.word_wrap = True
-    # FIX: This prevents text from going out of the slide
+    
     tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE 
 
-    # ... (Alignment logic remains same) ...
+    content_data = el.get("content", []) 
+    alignment_map = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIGHT}
+    align_enum = alignment_map.get(el.get("align", "left"), PP_ALIGN.LEFT)
+    
 
     for i, para_data in enumerate(content_data):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
@@ -127,8 +124,9 @@ def add_text(slide, el):
             # Formatting
             if run_data.get("bold"): font.bold = True
             
-            # Color Fix
-            apply_font_color(font, run_data.get("color_rgb"))
+            
+            color_val = run_data.get("color_rgb") or run_data.get("font_color")
+            apply_font_color(font, color_val)
             
             # Size logic
             layout_default = el.get("font_size", 18)
