@@ -85,67 +85,54 @@ def parse_color(color_val):
             if parsed:
                 font.color.rgb = parsed
                 
+def apply_font_color(font, color_val):
+    """Handles colors whether they are Hex strings or Integers (from the extractor)."""
+    if not color_val: return
+    try:
+        if isinstance(color_val, int):
+            # Convert integer back to RGB components
+            r = (color_val >> 16) & 0xFF
+            g = (color_val >> 8) & 0xFF
+            b = color_val & 0xFF
+            font.color.rgb = RGBColor(r, g, b)
+        else:
+            # Handle hex string
+            clean_hex = str(color_val).replace("#", "").strip()
+            font.color.rgb = RGBColor.from_string(clean_hex)
+    except:
+        pass
+
+                
+from pptx.enum.text import MSO_AUTO_SIZE # <--- Add this import at the top
+
 def add_text(slide, el):
     l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
-    
     box = slide.shapes.add_textbox(l, t, w, h)
     tf = box.text_frame
     tf.word_wrap = True
-    # CRITICAL FIX: Auto-size must be set on the text_frame
+    # FIX: This prevents text from going out of the slide
     tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE 
-    
-    # Alignment Mapping
-    align_map = {
-        "left": PP_ALIGN.LEFT,
-        "center": PP_ALIGN.CENTER,
-        "right": PP_ALIGN.RIGHT,
-        "justify": PP_ALIGN.JUSTIFY
-    }
-    layout_align = el.get("style", {}).get("align", "left")
-    align_enum = align_map.get(layout_align, PP_ALIGN.LEFT)
 
-    content_data = el.get("content", [])
-
-    if isinstance(content_data, str):
-        p = tf.paragraphs[0]
-        p.text = content_data
-        p.alignment = align_enum
-        return
+    # ... (Alignment logic remains same) ...
 
     for i, para_data in enumerate(content_data):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
         p.alignment = align_enum
         
-        # Check if para_data is a list of runs or a simple dict/string
-        # (Binder flattening might leave mixed types, safe check:)
-        if not isinstance(para_data, list):
-             # Try to extract text if it's a dict, else stringify
-             p.text = para_data.get("text", "") if isinstance(para_data, dict) else str(para_data)
-             continue
-
         for run_data in para_data:
             run = p.add_run()
             run.text = run_data.get("text", "")
-            
             font = run.font
-            # Flexible Key Checks
-            if run_data.get("bold") or run_data.get("font_bold"): font.bold = True
-            if run_data.get("italic") or run_data.get("font_italic"): font.italic = True
             
-            # COLOR FIX: Use the robust helper
-            raw_color = run_data.get("color_rgb") or run_data.get("font_color")
-            safe_apply_color(font, raw_color)
+            # Formatting
+            if run_data.get("bold"): font.bold = True
             
-            # SIZE FIX:
-            # Do NOT set font.size here if you want Auto-Fit to work perfectly.
-            # However, if you must set a MAX size, set it larger than needed.
-            # Ideally, rely on the "style" -> "font_size" from layout only.
+            # Color Fix
+            apply_font_color(font, run_data.get("color_rgb"))
             
-            # Only apply explicit size if it's notably different/header
-            # Otherwise let Auto-Fit handle the shrinking.
-            layout_size = el.get("font_size", 18)
-            if layout_size > 24: # Only enforce size for Titles/Headers
-                 font.size = Pt(layout_size)
+            # Size logic
+            layout_default = el.get("font_size", 18)
+            font.size = Pt(layout_default) # Prioritize layout size for density control
                     
 
 
