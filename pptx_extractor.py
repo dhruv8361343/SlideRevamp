@@ -159,10 +159,24 @@ def extract(pptx_path: Path, out_dir: Path):
                             except Exception:
                                 pass
                             runs.append(run_meta)
+                        is_bullet = False
+                        try:
+                            if p.level is not None:
+                                # python-pptx marks bullet via `p._p.pPr.bu*`
+                                if p._p.pPr is not None and (
+                                    p._p.pPr.find(".//a:buChar", namespaces=p._p.nsmap) is not None or
+                                    p._p.pPr.find(".//a:buAutoNum", namespaces=p._p.nsmap) is not None
+                                ):
+                                    is_bullet = True
+                        except Exception:
+                            pass
+                            
                         paras.append({
                             "level": p.level,
+                            "is_bullet": is_bullet,
                             "runs": runs
                         })
+
                     base["paragraphs"] = paras
             except Exception:
                 # fallback: include XML snapshot to debug
@@ -292,4 +306,5 @@ if __name__ == "__main__":
     pptx_path = Path(sys.argv[1])
     out_dir = Path(sys.argv[2])
     extract(pptx_path, out_dir)
+
 
