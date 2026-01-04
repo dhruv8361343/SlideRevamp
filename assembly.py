@@ -97,7 +97,7 @@ def apply_font_color(font, color_val):
         pass
 
                 
-from pptx.enum.text import MSO_AUTO_SIZE # <--- Add this import at the top
+from pptx.enum.text import MSO_AUTO_SIZE 
 
 def add_text(slide, el):
     l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
@@ -115,6 +115,7 @@ def add_text(slide, el):
     for i, para_data in enumerate(content_data):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
         p.alignment = align_enum
+
         
         if isinstance(para_data, dict):
             p.level = para_data.get("level", 0)
@@ -127,18 +128,20 @@ def add_text(slide, el):
         for run_data in runs_to_process:
             run = p.add_run()
             
-            # --- FIX STARTS HERE ---
+            
             if isinstance(run_data, str):
                 # If it's just a string, apply it directly
                 run.text = run_data
                 font = run.font
+                apply_font_color(font, el.get("font_color") or el.get("color_rgb"))
+            
             else:
                 # If it's a dictionary, extract text and formatting
                 run.text = run_data.get("text", "")
                 font = run.font
                 if run_data.get("bold"): font.bold = True
                     
-                color_val = run_data.get("color_rgb") or run_data.get("font_color")
+                color_val = run_data.get("color_rgb") or run_data.get("font_color") or el.get("font_color")
                 apply_font_color(font, color_val)
 
             # Apply font size (either from run, element, or default 18)
@@ -167,6 +170,10 @@ def add_image(slide, el):
 
     frame_ratio = w / h
     img_ratio = img_w / img_h
+
+    if el.get("width", 0) > 0.9 and el.get("height", 0) > 0.9:
+        slide.shapes.add_picture(str(image_path), 0, 0, prs.slide_width, prs.slide_height)
+        return
     
     # 2. Add Picture
     pic = slide.shapes.add_picture(str(image_path), l, t)
