@@ -16,12 +16,15 @@ ASSETS_DIR = Path("/kaggle/working/outputs")
 
 
 def apply_background(slide, bg_path):
+    slide_width = slide.part.slide_layout.part.slide_width
+    slide_height = slide.part.slide_layout.part.slide_height
+
     slide.shapes.add_picture(
         str(bg_path),
         left=Inches(0),
         top=Inches(0),
-        width=prs.slide_width,
-        height=prs.slide_height
+        width=slide_width,
+        height=slide_height
     )
 def n2pt(x, y, w, h):
     return (
@@ -79,33 +82,61 @@ def parse_color(color_val):
         except: pass
     return None
                 
-def apply_font_color(font, color_val):
-    """Handles colors whether they are Hex strings or Integers (from the extractor)."""
-    if not color_val: return
+def apply_run_color(font, run_data, el):
+    # order of priority
+    # 1. run explicit color
+    # 2. element inherited color
+    # 3. leave default
+
+    val = (
+        (run_data.get("color_rgb") if isinstance(run_data, dict) else None)
+        or run_data.get("font_color") if isinstance(run_data, dict) else None
+        or el.get("font_color")
+    )
+
+    if not val:
+        return
+
     try:
-        if isinstance(color_val, int):
-            # Convert integer back to RGB components
-            r = (color_val >> 16) & 0xFF
-            g = (color_val >> 8) & 0xFF
-            b = color_val & 0xFF
+        # CASE 1: already RGBColor object
+        if hasattr(val, 'rgb'):
+            font.color.rgb = val
+            return
+
+        # CASE 2: integer like 16711680
+        if isinstance(val, int):
+            r = (val >> 16) & 0xFF
+            g = (val >> 8) & 0xFF
+            b = val & 0xFF
             font.color.rgb = RGBColor(r, g, b)
-        else:
-            # Handle hex string
-            clean_hex = str(color_val).replace("#", "").strip()
-            font.color.rgb = RGBColor.from_string(clean_hex)
-    except:
-        pass
+            return
+
+        # CASE 3: hex string
+        clean = str(val).replace("#", "").strip()
+        font.color.rgb = RGBColor.from_string(clean)
+
+    except Exception:
+        # fallback default
+        font.color.rgb = RGBColor(0, 0, 0)
+
 
                 
 from pptx.enum.text import MSO_AUTO_SIZE 
 
 def add_text(slide, el):
-    l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
+    # expand usable content area automatically
+    if el["width"] < 0.75:  # if layout provided narrow box -> stretch it
+        l = int(prs.slide_width * 0.05)
+        w = int(prs.slide_width * 0.90)
+    else:
+        l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
+
     box = slide.shapes.add_textbox(l, t, w, h)
+
     tf = box.text_frame
     tf.word_wrap = True
     
-    tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE 
+    tf.auto_size = MSO_AUTO_SIZE.SHAPE_TO_FIT_TEXT 
 
     content_data = el.get("content", []) 
     alignment_map = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIGHT}
@@ -116,10 +147,16 @@ def add_text(slide, el):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
         p.alignment = align_enum
 
+        ls = el.get("line_spacing")
+        if ls:
+            p.line_spacing = ls
+
         
         if isinstance(para_data, dict):
             p.level = para_data.get("level", 0)
             runs_to_process = para_data.get("runs", [])
+            if para_data.get("is_bullet", False):
+                enable_bullets(p)
         else:
             # If para_data is just a list of runs directly
             runs_to_process = para_data
@@ -130,19 +167,18 @@ def add_text(slide, el):
             
             
             if isinstance(run_data, str):
-                # If it's just a string, apply it directly
                 run.text = run_data
                 font = run.font
-                apply_font_color(font, el.get("font_color") or el.get("color_rgb"))
+                apply_run_color(font, run_data, el)
+
             
             else:
-                # If it's a dictionary, extract text and formatting
                 run.text = run_data.get("text", "")
                 font = run.font
                 if run_data.get("bold"): font.bold = True
                     
-                color_val = run_data.get("color_rgb") or run_data.get("font_color") or el.get("font_color")
-                apply_font_color(font, color_val)
+                apply_run_color(font, run_data, el)
+
 
             # Apply font size (either from run, element, or default 18)
             size = 18
