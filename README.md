@@ -103,6 +103,29 @@ create real data by running my scripts on real ppts
 
 train layout generator with 6 outputs
 
+created scripts to assemble the ppt (assembly.py) to check the redesigned ppt with less no. of layouts
+
+
+### (30-5 jan)
+increase the no. of layout outputs to 16
+
+retrain the layout generator with 16 layouts
+
+loss of test set and validation set respectively
+ ```python
+[0]	validation_0-mlogloss:2.72086	validation_1-mlogloss:2.73958
+[50]	validation_0-mlogloss:1.45772	validation_1-mlogloss:1.84872
+[100]	validation_0-mlogloss:0.96920	validation_1-mlogloss:1.44070
+[150]	validation_0-mlogloss:0.69202	validation_1-mlogloss:1.15627
+[200]	validation_0-mlogloss:0.52421	validation_1-mlogloss:0.95506
+[250]	validation_0-mlogloss:0.41569	validation_1-mlogloss:0.79912
+[299]	validation_0-mlogloss:0.34583	validation_1-mlogloss:0.67543
+```
+
+
+<img width="878" height="701" alt="Image" src="https://github.com/user-attachments/assets/975afe62-7c4c-4ae3-82e3-45383732b482" />
+
+
 
 
 
