@@ -1,10 +1,5 @@
 
 import math
-
-
-
-
-
 def split_content(slide_meta):
     texts = []
     images = []
@@ -23,14 +18,9 @@ def split_content(slide_meta):
 
 
 def bind_content(layout, texts, images, tables):
-    """
-    Binds content to the layout slots. 
-    Smart Feature: Distributes text paragraphs evenly across available text slots.
-    """
     bound = []
     
-    #  Flatten all text into a single list of paragraphs 
-    # This allows us to reflow text from 1 box into 2 or 3 columns
+    # 1. Flatten all text into a single list of paragraphs
     all_paragraphs = []
     for text_block in texts:
         if isinstance(text_block, list):
@@ -38,70 +28,54 @@ def bind_content(layout, texts, images, tables):
         else:
             all_paragraphs.append(text_block)
 
-    # Prepare Iterators 
+    # 2. Identify Text Slots & Pre-calculate Distribution (Round Robin)
+    text_layout_indices = [i for i, el in enumerate(layout["elements"]) if el["type"] == "text"]
+    num_text_slots = len(text_layout_indices)
+    
+    # Create buckets for each slot
+    slot_allocations = [[] for _ in range(num_text_slots)]
+    
+    # Distribute paragraphs evenly (Card dealing style)
+    if num_text_slots > 0:
+        for i, para in enumerate(all_paragraphs):
+            target_bucket = i % num_text_slots
+            slot_allocations[target_bucket].append(para)
+
+    # Prepare Iterators for Images/Tables
     img_iter = iter(images)
     table_iter = iter(tables)
     
-    #  Calculate Text Distribution  
-    text_slots = [el for el in layout["elements"] if el["type"] == "text"]
-    num_text_slots = len(text_slots)
-    
-    
-    if num_text_slots > 0 and all_paragraphs:
-        avg_paras = len(all_paragraphs) / num_text_slots
-        chunk_size = max(1,round(avg_paras))
-    else:
-        chunk_size = 0
+    # Track which text bucket we are currently processing
+    text_bucket_idx = 0
 
-    current_para_idx = 0
-
-    #  Bind Elements 
-    for el in layout["elements"]:
+    # 3. Bind Elements
+    for i, el in enumerate(layout["elements"]):
+        new_el = el.copy() # Create a copy to avoid modifying template
         
-        # text logic (Smart Reflow) 
         if el["type"] == "text":
-            # Determine range of paragraphs for this specific slot
-            start = current_para_idx
-            end = start + chunk_size
-            
-            # If this is the LAST text slot, take everything remaining
-            is_last_text_slot = (bound.count(el) == num_text_slots - 1) # Rough check
-            # A safer check is counting how many text slots we've processed:
-            slots_processed = len([b for b in bound if b["type"] == "text"])
-            
-            if slots_processed == num_text_slots - 1:
-                end = len(all_paragraphs)
-            
-            # Slice the paragraphs for this slot
-            slot_content = all_paragraphs[start:end]
-            
-            # Update index for next loop
-            current_para_idx = end
-            
-            bound.append({
-                **el,
-                "content": slot_content
-            })
+            # Grab the pre-assigned bucket of paragraphs
+            if text_bucket_idx < len(slot_allocations):
+                new_el["content"] = slot_allocations[text_bucket_idx]
+                text_bucket_idx += 1
+            else:
+                new_el["content"] = []
+            bound.append(new_el)
 
-        # --- IMAGE LOGIC ---
         elif el["type"] == "image":
             try:
-                img_source = next(img_iter)
-                bound.append({**el, "source": img_source})
+                new_el["source"] = next(img_iter)
+                bound.append(new_el)
             except StopIteration:
-                # If we run out of images, we skip this slot (or you could put a placeholder)
-                pass
+                pass # Skip if no images left
 
-        # --- TABLE LOGIC ---
         elif el["type"] == "table":
             try:
-                table_source = next(table_iter)
-                bound.append({**el, "source": table_source})
+                new_el["source"] = next(table_iter)
+                bound.append(new_el)
             except StopIteration:
                 pass
 
     return bound
-
 def compute_density(text_list, box):
     """
     Calculates characters per unit of area.
@@ -224,6 +198,7 @@ def apply_image_rules(bound_elements, layout_name):
             }
 
     return bound_elements
+
 
 
 
