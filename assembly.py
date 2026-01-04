@@ -289,7 +289,8 @@ def assemble_slide(prs, slide_json, bg_path):
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     
 
-    apply_background(slide, bg_path)
+    apply_background(prs, slide, bg_path)
+
 
     sorted_elements = sorted(slide_json["elements"], key=lambda x: x.get("z", 0))
 
