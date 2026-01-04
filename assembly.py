@@ -240,7 +240,7 @@ def assemble_slide(prs, slide_json, bg_path):
 
     sorted_elements = sorted(slide_json["elements"], key=lambda x: x.get("z", 0))
 
-    for el in slide_elements:
+    for el in sorted_elements:
         if el["type"] == "text":
             add_text(slide, el)
         elif el["type"] == "image":
