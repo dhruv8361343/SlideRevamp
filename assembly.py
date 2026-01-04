@@ -56,6 +56,35 @@ def safe_apply_color(font, color_data):
             if len(parts) >= 3:
                 font.color.rgb = RGBColor(int(parts[0]), int(parts[1]), int(parts[2]))
         except: pass
+
+def parse_color(color_val):
+    """Handles Hex, Tuples, and common named colors."""
+    if not color_val: return None
+    c = str(color_val).lower().strip().replace("#", "")
+    
+    # Handle common names
+    named_colors = {"green": "008000", "red": "FF0000", "blue": "0000FF", "white": "FFFFFF", "black": "000000"}
+    if c in named_colors: return RGBColor.from_string(named_colors[c])
+    
+    # Handle Hex
+    if len(c) == 6:
+        try: return RGBColor.from_string(c)
+        except: pass
+        
+    # Handle Tuple strings like "(0, 128, 0)"
+    if "," in c:
+        try:
+            rgb = [int(x.strip()) for x in c.replace("(", "").replace(")", "").split(",")]
+            return RGBColor(rgb[0], rgb[1], rgb[2])
+        except: pass
+    return None
+
+# Inside add_text run loop, replace the color block with:
+            hex_color = run_data.get("color_rgb") or run_data.get("font_color")
+            parsed = parse_color(hex_color)
+            if parsed:
+                font.color.rgb = parsed
+                
 def add_text(slide, el):
     l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
     
@@ -219,7 +248,7 @@ def assemble_slide(prs, slide_json, bg_path):
 
     sorted_elements = sorted(slide_json["elements"], key=lambda x: x.get("z", 0))
 
-    for el in slide_json["elements"]:
+    for el in slide_elements:
         if el["type"] == "text":
             add_text(slide, el)
         elif el["type"] == "image":
