@@ -213,7 +213,7 @@ def add_text(prs,slide, el):
             if isinstance(run_data, str):
                 run.text = run_data
                 font = run.font
-                apply_font_color(font, el.get("font_color))
+                apply_font_color(font, el.get("font_color"))
 
             
             else:
