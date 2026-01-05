@@ -28,7 +28,7 @@ def apply_background(prs, slide, bg_path):
     )
 
 
-def n2pt(x, y, w, h):
+def n2pt(prs, x, y, w, h):
     return (
         int(x * prs.slide_width),
         int(y * prs.slide_height),
@@ -125,9 +125,9 @@ def apply_run_color(font, run_data, el):
                 
 from pptx.enum.text import MSO_AUTO_SIZE 
 
-def add_text(slide, el):
+def add_text(prs,slide, el):
     # expand usable content area automatically
-    l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
+    l, t, w, h = n2pt(prs,el["x"], el["y"], el["width"], el["height"])
 
     box = slide.shapes.add_textbox(l, t, w, h)
 
@@ -188,8 +188,8 @@ def add_text(slide, el):
 
 
 
-def add_image(slide, el):
-    l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
+def add_image(prs,slide, el):
+    l, t, w, h = n2pt(prs,el["x"], el["y"], el["width"], el["height"])
     
     # Construct full path
     image_path = ASSETS_DIR / el["source"]
@@ -255,7 +255,7 @@ def add_image(slide, el):
 
 
 
-def add_table(slide, el):
+def add_table(prs,slide, el):
     csv_path = ASSETS_DIR / el["source"]
     
     if not csv_path.exists():
@@ -268,7 +268,7 @@ def add_table(slide, el):
 
     n_rows = len(rows)
     n_cols = max(len(r) for r in rows) # Safety max
-    l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
+    l, t, w, h = n2pt(prs,el["x"], el["y"], el["width"], el["height"])
 
     table = slide.shapes.add_table(n_rows, n_cols, l, t, w, h).table
 
@@ -292,10 +292,10 @@ def assemble_slide(prs, slide_json, bg_path):
 
     for el in sorted_elements:
         if el["type"] == "text":
-            add_text(slide, el)
+            add_text(prs,slide, el)
         elif el["type"] == "image":
-            add_image(slide, el)
+            add_image(prs,slide, el)
         elif el["type"] == "table":
-            add_table(slide, el)
+            add_table(prs,slide, el)
             
 
