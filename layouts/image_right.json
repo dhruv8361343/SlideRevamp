@@ -6,8 +6,8 @@
       "type": "text",
       "x": 0.05,
       "y": 0.1,
-      "width": 0.45,
-      "height": 0.2,
+      "width": 0.9,
+      "height": 0.3,
       "z": 5,
       "style": {
         "font_size": 36,
@@ -23,7 +23,7 @@
       "height": 0.55,
       "z": 5,
       "style": {
-        "font_size": 22,
+        "font_size": 24,
         "align": "left"
       }
     },
@@ -40,3 +40,4 @@
     }
   ]
 }
+
