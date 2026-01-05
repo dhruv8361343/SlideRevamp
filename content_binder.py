@@ -21,8 +21,11 @@ def bind_content(layout, texts, images, tables):
     bound = []
     all_paragraphs = []
     for text_block in texts:
-        all_paragraphs.extend(text_block if isinstance(text_block, list) else [text_block])
-
+        if isinstance(text_block, list):
+            all_paragraphs.extend(text_block)
+        else:
+            all_paragraphs.append(text_block)
+            
     text_slots = [i for i, el in enumerate(layout["elements"]) if el["type"] == "text"]
     num_slots = len(text_slots)
     
@@ -42,6 +45,12 @@ def bind_content(layout, texts, images, tables):
         new_el = el.copy()
         if el["type"] == "text":
             new_el["content"] = slot_buckets[text_count]
+
+            if new_el["content"] and isinstance(new_el["content"][0], dict):
+                runs = new_el["content"][0].get("runs", [])
+                if runs and "color_rgb" in runs[0]:
+                    new_el["font_color"] = runs[0]["color_rgb"]
+            
             text_count += 1
             bound.append(new_el)
         elif el["type"] == "image":
@@ -175,6 +184,7 @@ def apply_image_rules(bound_elements, layout_name):
             }
 
     return bound_elements
+
 
 
 
