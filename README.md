@@ -127,6 +127,76 @@ loss of test set and validation set respectively
 
 
 
+```python
+def add_text(prs,slide, el):
+    # expand usable content area automatically
+    l, t, w, h = n2pt(prs,el["x"], el["y"], el["width"], el["height"])
+
+    box = slide.shapes.add_textbox(l, t, w, h)
+
+    tf = box.text_frame
+    tf.word_wrap = True
+    
+    tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE 
+    tf.vertical_anchor = MSO_ANCHOR.TOP 
+
+    style = el.get("style", {})
+
+    content_data = el.get("content", []) 
+    alignment_map = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIGHT}
+    align_enum = alignment_map.get(el.get("align", "left"), PP_ALIGN.LEFT)
+
+    calculated_size = el.get("font_size", 18)
+
+    for i, para_data in enumerate(content_data):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        p.alignment = align_enum
+
+        if isinstance(para_data, dict):
+            ls = para_data.get("line_spacing")
+            if ls: p.line_spacing = ls
+
+        
+        if isinstance(para_data, dict):
+            p.level = para_data.get("level", 0)
+            if para_data.get("is_bullet"):
+                enable_bullets(p)
+            runs_to_process = para_data.get("runs", [])
+            if para_data.get("is_bullet", False):
+                enable_bullets(p)
+        else:
+            # If para_data is just a list of runs directly
+            runs_to_process = para_data
+        
+        
+        for run_data in runs_to_process:
+            run = p.add_run()
+            if isinstance(run_data, str):
+                run.text = run_data
+                font = run.font
+                apply_font_color(font, el.get("font_color"))
+
+            
+            else:
+                run.text = run_data.get("text", "")
+                font = run.font
+                if run_data.get("bold"): font.bold = True
+                    
+                specific_color = run_data.get("color_rgb") or para_data.get("font_color") if isinstance(para_data, dict) else None
+                final_color = specific_color or el.get("font_color")
+                
+                apply_font_color(font, final_color)
+
+
+            # Apply font size (either from run, element, or default 18)
+            size = 18
+            if isinstance(run_data, dict):
+                size = run_data.get("font_size") or el.get("font_size", 18)
+            else:
+                size = el.get("font_size", 18)
+            run.font.size = Pt(calculated_size)```
+
+
 
 
 
