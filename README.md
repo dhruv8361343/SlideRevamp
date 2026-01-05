@@ -1,6 +1,9 @@
 # SlideRevamp
 
-link for daily log file : https://docs.google.com/document/d/1fgdK756dCaBX_L8zydD_j4TovyWBluuUPhGvj8ZX3es/edit?usp=sharing
+## link for daily log file : https://docs.google.com/document/d/1fgdK756dCaBX_L8zydD_j4TovyWBluuUPhGvj8ZX3es/edit?usp=sharing
+
+## link for kaggle notebook for using this and instructions for using the notebook are given in the notebook:https://www.kaggle.com/code/dhruv836/slide-revamp
+
 ## Timeline and descripiton of work done (actual followed)
 ### (8-13 jan)
 read this documenatation of python-pptx library to extract an ppt
@@ -125,44 +128,11 @@ loss of test set and validation set respectively
 
 <img width="878" height="701" alt="Image" src="https://github.com/user-attachments/assets/975afe62-7c4c-4ae3-82e3-45383732b482" />
 
+make the script to assemble slide 
+
+check and improove the outputs
 
 
-```python
-def compute_density(text_list, box):
-    if not text_list:
-        return 0
-        
-    # CHANGE: Access the text within the new run/level dictionary structure
-    total_chars = 0
-    for para in text_list:
-        if isinstance(para, dict):
-            # Sum the length of text in every run
-            total_chars += sum(len(run.get("text", "")) for run in para.get("runs", []))
-        else:
-            total_chars += len(str(para))
-    
-    area = box.get("width", 0.1) * box.get("height", 0.1)
-    if area == 0:
-        return float("inf")
-        
-    return total_chars / area
-
-def choose_font_size(density):
-    BASE_FONT = 28 
-
-    # Density thresholds (tuned for 0-1 normalized coordinates)
-    # Example: 200 chars in a 0.5x0.5 box (0.25 area) = 800 density
-    
-    if density < 200:       # Titles only
-        return 28
-    elif density < 600:     # Short bullets
-        return 24
-    elif density < 1200:    # Normal paragraph
-        return 18
-    elif density < 2500:    # Dense text
-        return 14
-    else:                   # Wall of text
-        return 10           # Go smaller to ensure fit)```
 
 
 
