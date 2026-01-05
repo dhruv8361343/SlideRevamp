@@ -115,11 +115,22 @@ def apply_run_color(font, run_data, el):
         font.color.rgb = RGBColor(0, 0, 0) # Fallback to black
 
 def enable_bullets(paragraph):
-    """Force-enables a standard bullet character at the XML level."""
+    """
+    Manually enables bullets by injecting the correct XML elements 
+    into the paragraph properties.
+    """
     pPr = paragraph._p.get_or_add_pPr()
-    # buChar is the 'bullet character' element
-    buChar = pPr.get_or_add_buChar()
-    buChar.char = "•"
+    
+    # 1. Check if buChar already exists, if not, create it
+    # The XML tag for bullet character is 'buChar'
+    buChar = pPr.find('.//a:buChar', namespaces=pPr.nsmap)
+    if buChar is None:
+        from pptx.oxml.xmlchemy import OxmlElement
+        buChar = OxmlElement('a:buChar')
+        pPr.append(buChar)
+    
+    # 2. Set the bullet character (e.g., a standard dot)
+    buChar.set('char', '•')
 
 
 
