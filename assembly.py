@@ -85,41 +85,43 @@ def parse_color(color_val):
     return None
                 
 def apply_run_color(font, run_data, el):
-    # order of priority
-    # 1. run explicit color
-    # 2. element inherited color
-    # 3. leave default
-
-    val = (
-        (run_data.get("color_rgb") if isinstance(run_data, dict) else None)
-        or run_data.get("font_color") if isinstance(run_data, dict) else None
-        or el.get("font_color")
-    )
+    # Order of priority: 1. run color_rgb, 2. run font_color, 3. element font_color
+    val = None
+    if isinstance(run_data, dict):
+        val = run_data.get("color_rgb") or run_data.get("font_color")
+    
+    # If run didn't have it, check the parent element
+    if not val:
+        val = el.get("font_color")
 
     if not val:
         return
 
     try:
-        # CASE 1: already RGBColor object
         if hasattr(val, 'rgb'):
             font.color.rgb = val
             return
 
-        # CASE 2: integer like 16711680
         if isinstance(val, int):
-            r = (val >> 16) & 0xFF
-            g = (val >> 8) & 0xFF
-            b = val & 0xFF
+            r, g, b = (val >> 16) & 0xFF, (val >> 8) & 0xFF, val & 0xFF
             font.color.rgb = RGBColor(r, g, b)
             return
 
-        # CASE 3: hex string
         clean = str(val).replace("#", "").strip()
-        font.color.rgb = RGBColor.from_string(clean)
+        if len(clean) == 6:
+            font.color.rgb = RGBColor.from_string(clean)
 
     except Exception:
-        # fallback default
-        font.color.rgb = RGBColor(0, 0, 0)
+        font.color.rgb = RGBColor(0, 0, 0) # Fallback to black
+
+def enable_bullets(paragraph):
+    """Force-enables a standard bullet character at the XML level."""
+    pPr = paragraph._p.get_or_add_pPr()
+    # buChar is the 'bullet character' element
+    buChar = pPr.get_or_add_buChar()
+    buChar.char = "•"
+
+
 
 
                 
@@ -134,7 +136,7 @@ def add_text(prs,slide, el):
     tf = box.text_frame
     tf.word_wrap = True
     
-    tf.auto_size = MSO_AUTO_SIZE.SHAPE_TO_FIT_TEXT 
+    tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE 
 
     content_data = el.get("content", []) 
     alignment_map = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIGHT}
@@ -152,6 +154,8 @@ def add_text(prs,slide, el):
         
         if isinstance(para_data, dict):
             p.level = para_data.get("level", 0)
+            if para_data.get("is_bullet"):
+                enable_bullets(p)
             runs_to_process = para_data.get("runs", [])
             if para_data.get("is_bullet", False):
                 enable_bullets(p)
@@ -162,8 +166,6 @@ def add_text(prs,slide, el):
         
         for run_data in runs_to_process:
             run = p.add_run()
-            
-            
             if isinstance(run_data, str):
                 run.text = run_data
                 font = run.font
