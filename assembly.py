@@ -114,6 +114,39 @@ def apply_run_color(font, run_data, el):
     except Exception:
         font.color.rgb = RGBColor(0, 0, 0) # Fallback to black
 
+def apply_font_color(font, color_val):
+    """
+    Robustly applies color to a font object.
+    Supports Hex strings (from updated extractor), integers, and basic names.
+    """
+    if not color_val:
+        return
+    
+    try:
+        # 1. Handle Hex strings (e.g., "FF5733" or "#FF5733")
+        if isinstance(color_val, str):
+            clean_hex = color_val.strip().replace("#", "").lower()
+            
+            # Map common names if the extractor picked them up
+            named_colors = {
+                "green": "008000", "red": "ff0000", "blue": "0000ff", 
+                "white": "ffffff", "black": "000000"
+            }
+            hex_to_use = named_colors.get(clean_hex, clean_hex)
+            
+            if len(hex_to_use) == 6:
+                font.color.rgb = RGBColor.from_string(hex_to_use)
+                
+        # 2. Handle Integers (fallback for old extractor versions)
+        elif isinstance(color_val, int):
+            r = (color_val >> 16) & 0xFF
+            g = (color_val >> 8) & 0xFF
+            b = color_val & 0xFF
+            font.color.rgb = RGBColor(r, g, b)
+            
+    except Exception as e:
+        print(f"Warning: Could not apply color '{color_val}': {e}")
+
 def enable_bullets(paragraph):
     """
     Manually enables bullets by injecting the correct XML elements 
@@ -180,7 +213,7 @@ def add_text(prs,slide, el):
             if isinstance(run_data, str):
                 run.text = run_data
                 font = run.font
-                apply_run_color(font, run_data, el)
+                apply_font_color(font, el.get("font_color))
 
             
             else:
@@ -188,7 +221,10 @@ def add_text(prs,slide, el):
                 font = run.font
                 if run_data.get("bold"): font.bold = True
                     
-                apply_run_color(font, run_data, el)
+                specific_color = run_data.get("color_rgb") or para_data.get("font_color") if isinstance(para_data, dict) else None
+                final_color = specific_color or el.get("font_color")
+                
+                apply_font_color(font, final_color)
 
 
             # Apply font size (either from run, element, or default 18)
