@@ -169,7 +169,7 @@ def enable_bullets(paragraph):
 
 
                 
-from pptx.enum.text import MSO_AUTO_SIZE 
+from pptx.enum.text import MSO_AUTO_SIZE , MSO_ANCHOR
 
 def add_text(prs,slide, el):
     # expand usable content area automatically
@@ -180,21 +180,24 @@ def add_text(prs,slide, el):
     tf = box.text_frame
     tf.word_wrap = True
     
-    tf.auto_size = MSO_AUTO_SIZE.SHAPE_TO_FIT_TEXT 
+    tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE 
+    tf.vertical_anchor = MSO_ANCHOR.TOP 
+
+    style = el.get("style", {})
 
     content_data = el.get("content", []) 
     alignment_map = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIGHT}
     align_enum = alignment_map.get(el.get("align", "left"), PP_ALIGN.LEFT)
 
-    calculated_size = el.get("font_size", 18)
+    base_font_size = style.get("font_size") or el.get("font_size", 18)
 
     for i, para_data in enumerate(content_data):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
         p.alignment = align_enum
 
-        ls = el.get("line_spacing")
-        if ls:
-            p.line_spacing = ls
+        if isinstance(para_data, dict):
+            ls = para_data.get("line_spacing")
+            if ls: p.line_spacing = ls
 
         
         if isinstance(para_data, dict):
