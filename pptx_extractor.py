@@ -163,11 +163,16 @@ def extract(pptx_path: Path, out_dir: Path):
                         try:
                             if p.level is not None:
                                 # python-pptx marks bullet via `p._p.pPr.bu*`
-                                if p._p.pPr is not None and (
-                                    p._p.pPr.find(".//a:buChar", namespaces=p._p.nsmap) is not None or
-                                    p._p.pPr.find(".//a:buAutoNum", namespaces=p._p.nsmap) is not None
-                                ):
-                                    is_bullet = True
+                                pPr = p._p.pPr
+                                if pPr is not None:
+        # Search for bullet character or auto-numbering
+                                    bu_char = pPr.find(".//a:buChar", namespaces=p._p.nsmap)
+                                    bu_none = pPr.find(".//a:buNone", namespaces=p._p.nsmap)
+        # It's a bullet if buChar exists and buNone does NOT exist
+                                    if bu_char is not None and bu_none is None:
+                                        is_bullet = True
+                                    elif pPr.find(".//a:buAutoNum", namespaces=p._p.nsmap) is not None:
+                                        is_bullet = True
                         except Exception:
                             pass
                             
@@ -306,5 +311,6 @@ if __name__ == "__main__":
     pptx_path = Path(sys.argv[1])
     out_dir = Path(sys.argv[2])
     extract(pptx_path, out_dir)
+
 
 
