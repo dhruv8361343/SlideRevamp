@@ -127,11 +127,7 @@ from pptx.enum.text import MSO_AUTO_SIZE
 
 def add_text(slide, el):
     # expand usable content area automatically
-    if el["width"] < 0.75:  # if layout provided narrow box -> stretch it
-        l = int(prs.slide_width * 0.05)
-        w = int(prs.slide_width * 0.90)
-    else:
-        l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
+    l, t, w, h = n2pt(el["x"], el["y"], el["width"], el["height"])
 
     box = slide.shapes.add_textbox(l, t, w, h)
 
