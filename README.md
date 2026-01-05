@@ -130,7 +130,7 @@ loss of test set and validation set respectively
 
 make the script to assemble slide 
 
-check and improove the outputs
+check and improve the outputs
 
 
 
