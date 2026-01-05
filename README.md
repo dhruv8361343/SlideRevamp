@@ -128,73 +128,41 @@ loss of test set and validation set respectively
 
 
 ```python
-def add_text(prs,slide, el):
-    # expand usable content area automatically
-    l, t, w, h = n2pt(prs,el["x"], el["y"], el["width"], el["height"])
-
-    box = slide.shapes.add_textbox(l, t, w, h)
-
-    tf = box.text_frame
-    tf.word_wrap = True
-    
-    tf.auto_size = MSO_AUTO_SIZE.TEXT_TO_FIT_SHAPE 
-    tf.vertical_anchor = MSO_ANCHOR.TOP 
-
-    style = el.get("style", {})
-
-    content_data = el.get("content", []) 
-    alignment_map = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIGHT}
-    align_enum = alignment_map.get(el.get("align", "left"), PP_ALIGN.LEFT)
-
-    calculated_size = el.get("font_size", 18)
-
-    for i, para_data in enumerate(content_data):
-        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
-        p.alignment = align_enum
-
-        if isinstance(para_data, dict):
-            ls = para_data.get("line_spacing")
-            if ls: p.line_spacing = ls
-
+def compute_density(text_list, box):
+    if not text_list:
+        return 0
         
-        if isinstance(para_data, dict):
-            p.level = para_data.get("level", 0)
-            if para_data.get("is_bullet"):
-                enable_bullets(p)
-            runs_to_process = para_data.get("runs", [])
-            if para_data.get("is_bullet", False):
-                enable_bullets(p)
+    # CHANGE: Access the text within the new run/level dictionary structure
+    total_chars = 0
+    for para in text_list:
+        if isinstance(para, dict):
+            # Sum the length of text in every run
+            total_chars += sum(len(run.get("text", "")) for run in para.get("runs", []))
         else:
-            # If para_data is just a list of runs directly
-            runs_to_process = para_data
+            total_chars += len(str(para))
+    
+    area = box.get("width", 0.1) * box.get("height", 0.1)
+    if area == 0:
+        return float("inf")
         
-        
-        for run_data in runs_to_process:
-            run = p.add_run()
-            if isinstance(run_data, str):
-                run.text = run_data
-                font = run.font
-                apply_font_color(font, el.get("font_color"))
+    return total_chars / area
 
-            
-            else:
-                run.text = run_data.get("text", "")
-                font = run.font
-                if run_data.get("bold"): font.bold = True
-                    
-                specific_color = run_data.get("color_rgb") or para_data.get("font_color") if isinstance(para_data, dict) else None
-                final_color = specific_color or el.get("font_color")
-                
-                apply_font_color(font, final_color)
+def choose_font_size(density):
+    BASE_FONT = 28 
 
-
-            # Apply font size (either from run, element, or default 18)
-            size = 18
-            if isinstance(run_data, dict):
-                size = run_data.get("font_size") or el.get("font_size", 18)
-            else:
-                size = el.get("font_size", 18)
-            run.font.size = Pt(calculated_size)```
+    # Density thresholds (tuned for 0-1 normalized coordinates)
+    # Example: 200 chars in a 0.5x0.5 box (0.25 area) = 800 density
+    
+    if density < 200:       # Titles only
+        return 28
+    elif density < 600:     # Short bullets
+        return 24
+    elif density < 1200:    # Normal paragraph
+        return 18
+    elif density < 2500:    # Dense text
+        return 14
+    else:                   # Wall of text
+        return 10           # Go smaller to ensure fit)```
 
 
 
