@@ -189,7 +189,7 @@ def add_text(prs,slide, el):
     alignment_map = {"left": PP_ALIGN.LEFT, "center": PP_ALIGN.CENTER, "right": PP_ALIGN.RIGHT}
     align_enum = alignment_map.get(el.get("align", "left"), PP_ALIGN.LEFT)
 
-    base_font_size = style.get("font_size") or el.get("font_size", 18)
+    calculated_size = el.get("font_size", 18)
 
     for i, para_data in enumerate(content_data):
         p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
