@@ -155,7 +155,7 @@ def extract(pptx_path: Path, out_dir: Path):
                             # color may be complicated; best-effort
                             try:
                                 if font.color and font.color.rgb:
-                                    run_meta["color_rgb"] = font.color.rgb
+                                    run_meta["color_rgb"] = str(font.color.rgb)
                             except Exception:
                                 pass
                             runs.append(run_meta)
@@ -311,6 +311,7 @@ if __name__ == "__main__":
     pptx_path = Path(sys.argv[1])
     out_dir = Path(sys.argv[2])
     extract(pptx_path, out_dir)
+
 
 
 
