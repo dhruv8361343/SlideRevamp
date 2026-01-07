@@ -5,7 +5,7 @@
 ## link for kaggle notebook for using this and instructions for using the notebook are given in the notebook:https://www.kaggle.com/code/dhruv836/slide-revamp
 
 ## Timeline and descripiton of work done (actual followed)
-### (8-13 jan)
+### (8-13 dec)
 read this documenatation of python-pptx library to extract an ppt
 https://python-pptx-fix.readthedocs.io/en/stable/user/intro.html
 
@@ -16,7 +16,7 @@ https://ai.google.dev/gemini-api/docs/quickstart
 wrote the prompt that is to be given with the output from python_extractor.py to LLM and completed the script/code for content refinement (content_refinement.py).
 (LLM will also give the detailed prompt that is to be given to stable diffusion v1.5 for background generation as per the prompt given by user)
 
-### (15-21 jan)
+### (15-21 dec)
 install and run the Real-ESRGAN AND U-2-NET model
 
 created scripts to use them on extracted images(upsclae.py mask.py smart_crop.py process_image.py)
@@ -109,7 +109,7 @@ train layout generator with 6 outputs
 created scripts to assemble the ppt (assembly.py) to check the redesigned ppt with less no. of layouts
 
 
-### (30-5 jan)
+### (30dec -5 jan)
 increase the no. of layout outputs to 16
 
 retrain the layout generator with 16 layouts
